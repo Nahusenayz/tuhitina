@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - My Bookings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- TopAppBar Section -->
+    <header>
+        <div class="header-logo">
+            <button onclick="history.back()" style="background: none; border: none; color: var(--primary-color); cursor: pointer;">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h1 class="font-display" style="margin-left: 12px;">Tihtina</h1>
+        </div>
+        <button class="lang-switch-btn" id="lang-toggle-btn">EN | አማርኛ</button>
+    </header>
+
+    <main class="container fade-in">
+        <h2 style="font-size: 1.5rem; margin-bottom: 24px;" data-i18n="bookings">My Bookings</h2>
+        
+        <div id="bookings-list">
+            <div class="card" style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h3 style="font-size: 1.1rem;">Sheraton Addis</h3>
+                        <p class="text-xs" style="color: var(--outline); margin-top: 4px;">ID: BK-748291</p>
+                        <p class="text-sm" icon-text style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                            <i class="far fa-calendar-alt" style="color: var(--primary-color);"></i>
+                            10 April - 12 April 2026
+                        </p>
+                    </div>
+                    <span style="background: #e6f4ea; color: #1e7e34; padding: 4px 12px; border-radius: var(--radius-full); font-size: 10px; font-weight: 800; text-transform: uppercase;">Confirmed</span>
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 20px;">
+                    <button class="btn btn-outline" style="flex: 1; padding: 10px; font-size: 12px;">View Details</button>
+                    <button class="btn btn-primary" style="flex: 1; padding: 10px; font-size: 12px;">Manage</button>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 20px; opacity: 0.6;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h3 style="font-size: 1.1rem;">Kuriftu Resort</h3>
+                        <p class="text-xs" style="color: var(--outline); margin-top: 4px;">ID: BK-112233</p>
+                        <p class="text-sm" style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                            <i class="far fa-calendar-alt"></i>
+                            15 March - 17 March 2026
+                        </p>
+                    </div>
+                    <span style="background: var(--surface-container-high); color: var(--on-surface-variant); padding: 4px 12px; border-radius: var(--radius-full); font-size: 10px; font-weight: 800; text-transform: uppercase;">Past</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-2" style="background: var(--primary-container); color: white; border: none;">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                <div style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-qrcode" style="font-size: 24px;"></i>
+                </div>
+                <div>
+                    <h3 style="color: white; font-size: 1rem;" data-i18n="qr_placeholder">Digital Check-in</h3>
+                    <p class="text-xs" style="opacity: 0.8;">Show this at the reception</p>
+                </div>
+            </div>
+            <div style="background: white; padding: 24px; border-radius: 16px; text-align: center;">
+                <i class="fas fa-qrcode" style="font-size: 120px; color: var(--primary-color);"></i>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Navigation -->
+    <nav class="floating-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="hotels.html" class="nav-item">
+            <i class="fas fa-concierge-bell"></i>
+        </a>
+        <a href="experiences.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+        </a>
+        <a href="my-bookings.html" class="nav-item active">
+            <i class="fas fa-calendar-check"></i>
+        </a>
+        <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-user-circle"></i>
+        </a>
+    </nav>
+
+    <!-- SOS Button -->
+    <a href="emergency.html" class="sos-btn">
+        <i class="fas fa-sos"></i>
+        <span style="font-weight: 800;">SOS</span>
+    </a>
+
+    <script type="module">
+        import api from './js/api.js';
+        import lang from './js/lang.js';
+        import './js/app.js';
+    </script>
+</body>
+</html>

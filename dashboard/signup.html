@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="background: var(--primary-color);">
+    <div class="container fade-in" style="margin-top: 30px; margin-bottom: 30px;">
+        <div class="card" style="padding: 30px;">
+            <div class="text-center mb-2">
+                <h1 style="color: var(--primary-color);">TIHTINA</h1>
+                <p>Create Your Guest Account</p>
+            </div>
+            
+            <form id="signup-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" class="form-control" placeholder="Abebe Bikila" required id="signup-name">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" placeholder="abebe@example.com" required id="signup-email">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" class="form-control" placeholder="+251 9..." required id="signup-phone">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" placeholder="••••••••" required id="signup-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+            </form>
+
+            <div class="text-center mt-2">
+                <p>Already have an account? <a href="login.html" style="color: var(--primary-color); font-weight: bold;">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import api from './js/api.js';
+        
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userData = {
+                name: document.getElementById('signup-name').value,
+                email: document.getElementById('signup-email').value,
+                phone: document.getElementById('signup-phone').value,
+                password: document.getElementById('signup-password').value
+            };
+            
+            const signupBtn = e.target.querySelector('button');
+            signupBtn.disabled = true;
+            signupBtn.innerText = 'Creating account...';
+
+            const res = await api.signup(userData);
+            
+            if(res.success) {
+                alert('Account created! Please check your email for verification or login.');
+                window.location.href = 'login.html';
+            } else {
+                alert('Error: ' + res.error);
+                signupBtn.disabled = false;
+                signupBtn.innerText = 'Sign Up';
+            }
+        });
+    </script>
+</body>
+</html>

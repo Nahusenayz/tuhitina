@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - Hotel Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<body>
+    <!-- TopAppBar Section -->
+    <header>
+        <div class="header-logo">
+            <button onclick="history.back()" style="background: none; border: none; color: var(--primary-color); cursor: pointer;">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h1 class="font-display" style="margin-left: 12px;">Tihtina</h1>
+        </div>
+        <button class="lang-switch-btn" id="lang-toggle-btn">EN | አማርኛ</button>
+    </header>
+
+    <main class="container fade-in">
+        <div class="card hotel-card" style="margin-bottom: 24px;">
+            <div class="hotel-img-container" style="height: 300px;">
+                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Hotel" class="hotel-img">
+                <div class="rating-badge">
+                    <i class="fas fa-star" style="color: #FFD700;"></i>
+                    <span>4.8</span>
+                </div>
+            </div>
+            <div class="hotel-content">
+                <h2 style="font-size: 1.5rem;">Addis Regency</h2>
+                <p class="text-sm" style="color: var(--on-surface-variant); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Addis Ababa, Ethiopia
+                </p>
+                
+                <div class="card" style="margin-top: 24px; padding: 16px; background: var(--surface-container-low); border: none; box-shadow: none;">
+                    <h3 style="font-size: 1rem; margin-bottom: 8px;">Description</h3>
+                    <p class="text-sm" style="color: var(--on-surface-variant);">Experience the finest hospitality in the heart of Addis Ababa. Our regency offers premium rooms, a world-class spa, and authentic Ethiopian cuisine.</p>
+                </div>
+
+                <div class="card" style="margin-top: 16px; padding: 16px; background: var(--surface-container-low); border: none; box-shadow: none;">
+                    <h3 style="font-size: 1rem; margin-bottom: 16px;">Amenities</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; gap: 16px;">
+                        <div><i class="fas fa-wifi" style="color: var(--primary-color);"></i><p class="text-xs" style="margin-top: 4px;">WiFi</p></div>
+                        <div><i class="fas fa-swimming-pool" style="color: var(--primary-color);"></i><p class="text-xs" style="margin-top: 4px;">Pool</p></div>
+                        <div><i class="fas fa-spa" style="color: var(--primary-color);"></i><p class="text-xs" style="margin-top: 4px;">Spa</p></div>
+                        <div><i class="fas fa-dumbbell" style="color: var(--primary-color);"></i><p class="text-xs" style="margin-top: 4px;">Gym</p></div>
+                        <div><i class="fas fa-parking" style="color: var(--primary-color);"></i><p class="text-xs" style="margin-top: 4px;">Parking</p></div>
+                        <div><i class="fas fa-utensils" style="color: var(--primary-color);"></i><p class="text-xs" style="margin-top: 4px;">Dining</p></div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 16px; padding: 0; overflow: hidden; height: 160px; border: none; position: relative; border-radius: var(--radius-lg);">
+                    <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=800&q=80" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;" alt="Map">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(0deg, rgba(0, 6, 102, 0.2), transparent);"></div>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <i class="fas fa-map-marker-alt" style="color: var(--error); font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="position: fixed; bottom: 100px; left: 16px; right: 16px; background: var(--surface); padding: 16px; border-radius: 20px; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 1001; border: 1px solid var(--outline-variant);">
+            <div>
+                <p class="text-xs uppercase font-bold" style="color: var(--outline);">PRICE</p>
+                <p style="font-size: 1.25rem; font-weight: 800; color: var(--secondary-color);">4,500 ETB <span class="text-xs" style="color: var(--outline); font-weight: 400;">/ NIGHT</span></p>
+            </div>
+            <a href="booking.html?id=1" class="btn btn-primary" style="padding: 14px 40px;" data-i18n="book_now">Book Now</a>
+        </div>
+    </main>
+
+    <!-- Floating Navigation -->
+    <nav class="floating-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="hotels.html" class="nav-item active">
+            <i class="fas fa-concierge-bell"></i>
+        </a>
+        <a href="experiences.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+        </a>
+        <a href="my-bookings.html" class="nav-item">
+            <i class="fas fa-calendar-check"></i>
+        </a>
+        <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-user-circle"></i>
+        </a>
+    </nav>
+
+    <!-- SOS Button -->
+    <a href="emergency.html" class="sos-btn">
+        <i class="fas fa-sos"></i>
+        <span style="font-weight: 800;">SOS</span>
+    </a>
+
+    <nav class="bottom-nav">
+        <!-- Reusing same nav -->
+    </nav>
+
+    <script type="module">
+        import api from './js/api.js';
+        import lang from './js/lang.js';
+        import './js/app.js';
+    </script>
+</body>
+</html>

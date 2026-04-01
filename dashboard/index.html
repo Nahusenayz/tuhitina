@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- TopAppBar Section -->
+    <header>
+        <div class="header-logo">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoaTl5Zr-8HPUtEmyZgNI5EJv_jrfdvBTtl-gIE0YGSORboB1PkgYuhQulyIGPq0V2fKWFM4z5wsktXSqj9N_f2uqdcPXEeg0NLzryvda86ccUJB5Y_yW9AQ-MLiQjIqKqhFooHKl2c16Be1P7FqXfUvol8Fpo6_8alddS5I5Vh9XhnkhF3gkukuuGrPZ4kyyGS8cvkmANadi8OnkSafh11N5Yz9buUVeJBfHwAiRjCtI3CoFZ8AIRstgZP0AayV6pzO6eFezlhJI" class="profile-img" alt="User">
+            <h1 class="font-display">Tihtina</h1>
+        </div>
+        <button class="lang-switch-btn" id="lang-toggle-btn">EN | አማርኛ</button>
+    </header>
+
+    <main class="container fade-in">
+        <!-- Search Section -->
+        <section class="mb-2">
+            <p class="text-xs uppercase tracking-widest" style="color: var(--secondary-color);" data-i18n="welcome_home">Welcome Home</p>
+            <h2 style="font-size: 2rem; margin-top: 8px;" data-i18n="where_to_stay">Where to stay?</h2>
+            
+            <div class="card" style="padding: 8px; display: flex; align-items: center; gap: 12px; margin-top: 24px;">
+                <i class="fas fa-search" style="color: var(--outline); margin-left: 12px;"></i>
+                <input type="text" placeholder="Hotel, experience, location..." style="flex: 1; border: none; outline: none; font-size: 16px;" data-i18n-placeholder="search_placeholder">
+                <button class="btn btn-primary" style="padding: 10px; border-radius: 12px; width: 44px; height: 44px;">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Featured Hotels (Horizontal Scroll) -->
+        <section>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px;">
+                <h3 style="font-size: 1.25rem;" data-i18n="featured_hotels">Featured Hotels</h3>
+                <a href="hotels.html" class="see-all">View All</a>
+            </div>
+            <div class="h-scroll" id="featured-hotels-list">
+                <!-- Hotel Card 1 -->
+                <div class="h-scroll-card">
+                    <div class="card hotel-card">
+                        <div class="hotel-img-container">
+                            <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80" class="hotel-img" alt="Sheraton Addis">
+                            <div class="rating-badge">
+                                <i class="fas fa-star" style="color: var(--secondary-color);"></i>
+                                <span>4.9</span>
+                            </div>
+                        </div>
+                        <div class="hotel-content">
+                            <p class="text-xs uppercase tracking-widest" style="color: var(--outline);">Addis Ababa</p>
+                            <h4 style="margin-top: 4px;">Sheraton Addis</h4>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                                <div class="price-tag">
+                                    <span class="text-xs uppercase" style="color: var(--outline);">ETB</span>
+                                    <span class="price-val">18,500</span>
+                                </div>
+                                <span class="text-xs" style="color: var(--outline);">/night</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Hotel Card 2 -->
+                <div class="h-scroll-card">
+                    <div class="card hotel-card" onclick="window.location.href='hotel-details.html?id=2'">
+                        <div class="hotel-img-container">
+                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" class="hotel-img" alt="Kuriftu Resort">
+                            <div class="rating-badge">
+                                <i class="fas fa-star" style="color: var(--secondary-color);"></i>
+                                <span>4.8</span>
+                            </div>
+                        </div>
+                        <div class="hotel-content">
+                            <p class="text-xs uppercase tracking-widest" style="color: var(--outline);">Bishoftu</p>
+                            <h4 style="margin-top: 4px;">Kuriftu Resort</h4>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                                <div class="price-tag">
+                                    <span class="text-xs uppercase" style="color: var(--outline);">ETB</span>
+                                    <span class="price-val">9,500</span>
+                                </div>
+                                <span class="text-xs" style="color: var(--outline);">/night</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Special Offers Banner -->
+        <section class="mt-2">
+            <div class="card" style="background: linear-gradient(rgba(0,6,102,0.8), rgba(0,6,102,0.8)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80'); background-size: cover; color: white; border: none; min-height: 180px; display: flex; flex-direction: column; justify-content: center;">
+                <span class="btn btn-secondary" style="align-self: flex-start; padding: 4px 12px; font-size: 10px; margin-bottom: 8px;">LIMITED OFFER</span>
+                <h3 style="color: white; font-size: 1.5rem;">30% Off Your First Stay</h3>
+                <p class="text-sm" style="opacity: 0.9;">Use code: WELCOME2026</p>
+            </div>
+        </section>
+
+        <!-- Top Experiences -->
+        <section class="mt-2">
+            <h3 style="font-size: 1.25rem; margin-bottom: 16px;" data-i18n="top_experiences">Top Experiences</h3>
+            <div id="experiences-list">
+                <div class="card" style="padding: 16px; display: flex; gap: 16px; align-items: center;">
+                    <img src="https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=200&q=80" style="width: 80px; height: 80px; border-radius: 16px; object-fit: cover;" alt="Coffee">
+                    <div style="flex: 1;">
+                        <h4 style="font-size: 1rem;">Traditional Coffee Ceremony</h4>
+                        <p class="text-xs" style="color: var(--outline);">Cultural Center • 2 Hours</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                            <span style="font-weight: 800; color: var(--secondary-color);">ETB 1,200</span>
+                            <button class="btn text-primary" style="padding: 0; font-size: 10px; text-decoration: underline;" data-i18n="book_now">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nearby Gems -->
+        <section class="mt-2">
+            <h3 style="font-size: 1.25rem; margin-bottom: 16px;" data-i18n="nearby_places">Nearby Gems</h3>
+            <div class="h-scroll" style="padding-left: 0; padding-right: 0;">
+                <div class="card" style="min-width: 200px; padding: 16px; display: flex; align-items: center; gap: 12px; border-radius: var(--radius-full); margin-bottom: 0;">
+                    <i class="fas fa-museum" style="color: var(--primary-color);"></i>
+                    <div>
+                        <p style="font-weight: 700; font-size: 14px;">National Museum</p>
+                        <p class="text-xs" style="color: var(--outline);">1.2 km away</p>
+                    </div>
+                </div>
+                <div class="card" style="min-width: 200px; padding: 16px; display: flex; align-items: center; gap: 12px; border-radius: var(--radius-full); margin-bottom: 0;">
+                    <i class="fas fa-tree" style="color: var(--primary-color);"></i>
+                    <div>
+                        <p style="font-weight: 700; font-size: 14px;">Unity Park</p>
+                        <p class="text-xs" style="color: var(--outline);">2.5 km away</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Navigation Bar -->
+    <nav class="floating-nav">
+        <a href="index.html" class="nav-item active">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="hotels.html" class="nav-item">
+            <i class="fas fa-concierge-bell"></i>
+        </a>
+        <a href="experiences.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+        </a>
+        <a href="my-bookings.html" class="nav-item">
+            <i class="fas fa-calendar-check"></i>
+        </a>
+        <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-user-circle"></i>
+        </a>
+    </nav>
+
+    <!-- SOS Button -->
+    <a href="emergency.html" class="sos-btn">
+        <i class="fas fa-sos"></i>
+        <span style="font-weight: 800;">SOS</span>
+    </a>
+
+    <script type="module">
+        import api from './js/api.js';
+        import lang from './js/lang.js';
+        import './js/app.js';
+    </script>
+</body>
+</html>

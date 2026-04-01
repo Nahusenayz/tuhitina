@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - Experiences</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- TopAppBar Section -->
+    <header>
+        <div class="header-logo">
+            <h1 class="font-display">Tihtina</h1>
+        </div>
+        <button class="lang-switch-btn" id="lang-toggle-btn">EN | አማርኛ</button>
+    </header>
+
+    <main class="container fade-in">
+        <h2 style="font-size: 1.5rem; margin-bottom: 24px;" data-i18n="experiences">Experiences</h2>
+        
+        <div class="card" style="padding: 12px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--outline-variant); box-shadow: none;">
+            <i class="fas fa-search" style="color: var(--outline);"></i>
+            <input type="text" placeholder="Search experiences..." style="border: none; outline: none; background: transparent; flex: 1; font-size: 14px;" data-i18n-placeholder="search_placeholder">
+        </div>
+
+        <div class="card hotel-card">
+            <div class="hotel-img-container">
+                <img src="https://images.unsplash.com/photo-1545638870-42aa19ac5812?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Exp" class="hotel-img">
+                <div class="rating-badge">
+                    <i class="fas fa-star" style="color: #FFD700;"></i>
+                    <span>4.9</span>
+                </div>
+            </div>
+            <div class="hotel-content">
+                <h3 style="font-size: 1.1rem;">Traditional Coffee Ceremony</h3>
+                <p class="text-sm" style="color: var(--on-surface-variant); margin-top: 4px;">Authentic Ethiopian experience in Bole</p>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 16px;">
+                    <div>
+                        <p class="text-xs uppercase font-bold" style="color: var(--outline);">LOCATION</p>
+                        <p class="text-sm">Addis Ababa</p>
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-val">800 ETB</span>
+                        <span class="text-xs uppercase" style="color: var(--outline);">PER PERSON</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block mt-2" data-i18n="book_now">Book Now</button>
+            </div>
+        </div>
+
+        <div class="card hotel-card">
+            <div class="hotel-img-container">
+                <img src="https://images.unsplash.com/photo-1627664819818-e147d6221422?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Exp" class="hotel-img">
+                <div class="rating-badge">
+                    <i class="fas fa-star" style="color: #FFD700;"></i>
+                    <span>5.0</span>
+                </div>
+            </div>
+            <div class="hotel-content">
+                <h3 style="font-size: 1.1rem;">Lalibela Church Tour</h3>
+                <p class="text-sm" style="color: var(--on-surface-variant); margin-top: 4px;">Guided historical tour of rock-hewn churches</p>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 16px;">
+                    <div>
+                        <p class="text-xs uppercase font-bold" style="color: var(--outline);">LOCATION</p>
+                        <p class="text-sm">Lalibela</p>
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-val">3,500 ETB</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block mt-2" data-i18n="book_now">Book Now</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Navigation -->
+    <nav class="floating-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="hotels.html" class="nav-item">
+            <i class="fas fa-concierge-bell"></i>
+        </a>
+        <a href="experiences.html" class="nav-item active">
+            <i class="fas fa-map-marked-alt"></i>
+        </a>
+        <a href="my-bookings.html" class="nav-item">
+            <i class="fas fa-calendar-check"></i>
+        </a>
+        <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-user-circle"></i>
+        </a>
+    </nav>
+
+    <!-- SOS Button -->
+    <a href="emergency.html" class="sos-btn">
+        <i class="fas fa-sos"></i>
+        <span style="font-weight: 800;">SOS</span>
+    </a>
+
+    <script type="module">
+        import api from './js/api.js';
+        import lang from './js/lang.js';
+        import './js/app.js';
+    </script>
+</body>
+</html>

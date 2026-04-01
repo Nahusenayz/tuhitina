@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - Hotels</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- TopAppBar Section -->
+    <header>
+        <div class="header-logo">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoaTl5Zr-8HPUtEmyZgNI5EJv_jrfdvBTtl-gIE0YGSORboB1PkgYuhQulyIGPq0V2fKWFM4z5wsktXSqj9N_f2uqdcPXEeg0NLzryvda86ccUJB5Y_yW9AQ-MLiQjIqKqhFooHKl2c16Be1P7FqXfUvol8Fpo6_8alddS5I5Vh9XhnkhF3gkukuuGrPZ4kyyGS8cvkmANadi8OnkSafh11N5Yz9buUVeJBfHwAiRjCtI3CoFZ8AIRstgZP0AayV6pzO6eFezlhJI" class="profile-img" alt="User">
+            <h1 class="font-display">Tihtina</h1>
+        </div>
+        <button class="lang-switch-btn" id="lang-toggle-btn">EN | አማርኛ</button>
+    </header>
+
+    <main class="container fade-in">
+        <!-- Search & Editorial Filter Section -->
+        <section class="mb-2">
+            <h2 style="font-size: 2rem; margin-bottom: 24px;" data-i18n="curated_stays">Curated <span style="color: var(--secondary-color);">Stays</span></h2>
+            <div class="card" style="padding: 8px; display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <i class="fas fa-search" style="color: var(--outline); margin-left: 12px;"></i>
+                <input type="text" placeholder="Search destinations..." style="flex: 1; border: none; outline: none; font-size: 16px;" data-i18n-placeholder="search_hotels_placeholder">
+            </div>
+            
+            <!-- Pill Filters -->
+            <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none;">
+                <button class="btn btn-primary" style="white-space: nowrap;">All Hotels</button>
+                <button class="btn btn-outline" style="white-space: nowrap; border-radius: var(--radius-full);">Price</button>
+                <button class="btn btn-outline" style="white-space: nowrap; border-radius: var(--radius-full);">Rating</button>
+                <button class="btn btn-outline" style="white-space: nowrap; border-radius: var(--radius-full);">Location</button>
+            </div>
+        </section>
+
+        <!-- Hotel List (Editorial Layout) -->
+        <div id="hotels-container">
+            <!-- Data will be loaded via JS -->
+             <p class="text-center">Loading hotels...</p>
+        </div>
+    </main>
+
+    <!-- Floating Navigation Bar -->
+    <nav class="floating-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="hotels.html" class="nav-item active">
+            <i class="fas fa-concierge-bell"></i>
+        </a>
+        <a href="experiences.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+        </a>
+        <a href="my-bookings.html" class="nav-item">
+            <i class="fas fa-calendar-check"></i>
+        </a>
+        <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-user-circle"></i>
+        </a>
+    </nav>
+
+    <!-- SOS Button -->
+    <a href="emergency.html" class="sos-btn">
+        <i class="fas fa-sos"></i>
+        <span style="font-weight: 800;">SOS</span>
+    </a>
+
+    <script type="module">
+        import api from './js/api.js';
+        
+        async function loadHotels() {
+            try {
+                const hotels = await api.getHotels();
+                const container = document.getElementById('hotels-container');
+                container.innerHTML = '';
+                
+                if (!hotels || hotels.length === 0) {
+                    container.innerHTML = '<p class="text-center">No hotels found.</p>';
+                    return;
+                }
+
+                hotels.forEach(hotel => {
+                    const hotelPrice = hotel.price_per_night || hotel.price || 0;
+                    const hotelImage = hotel.image_url || hotel.image || '';
+                    
+                    const card = `
+                        <div class="card hotel-card">
+                            <div class="hotel-img-container">
+                                <img src="${hotelImage}" class="hotel-img" alt="${hotel.name}">
+                                <div class="rating-badge">
+                                    <i class="fas fa-star" style="color: var(--secondary-color);"></i>
+                                    <span>${hotel.rating || '0.0'}</span>
+                                </div>
+                            </div>
+                            <div class="hotel-content">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 style="font-size: 1.25rem;">${hotel.name}</h3>
+                                        <p class="text-sm" style="color: var(--on-surface-variant); display: flex; align-items: center; gap: 4px; border:none;">
+                                            <i class="fas fa-map-marker-alt" style="font-size: 10px;"></i>
+                                            ${hotel.location}
+                                        </p>
+                                    </div>
+                                    <div class="price-tag">
+                                        <span class="text-xs uppercase" style="color: var(--secondary-color); font-weight: 800;">ETB</span>
+                                        <span class="price-val">${new Intl.NumberFormat().format(hotelPrice)}</span>
+                                        <span class="text-xs" style="color: var(--on-surface-variant);">/ NIGHT</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
+                                    <span class="text-xs" style="color: var(--on-surface-variant); font-weight: 500;">(Verified Stay)</span>
+                                    <button class="btn btn-primary" style="padding: 12px 32px;" onclick="window.location.href='hotel-details.html?id=${hotel.id}'">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+            } catch (error) {
+                console.error('Failed to load hotels:', error);
+                document.getElementById('hotels-container').innerHTML = '<p class="text-center">Error loading hotels.</p>';
+            }
+        }
+
+        loadHotels();
+    </script>
+</body>
+</html>

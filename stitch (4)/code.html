@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tihtina Guest Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-container": "#fed65b",
+              "on-surface-variant": "#454652",
+              "primary-fixed": "#e0e0ff",
+              "surface-dim": "#dadada",
+              "outline-variant": "#c6c5d4",
+              "on-tertiary-container": "#e17c5a",
+              "on-primary-fixed": "#000767",
+              "tertiary-fixed-dim": "#ffb59d",
+              "on-primary": "#ffffff",
+              "surface-tint": "#4c56af",
+              "secondary": "#735c00",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-tertiary-fixed": "#390c00",
+              "surface": "#f9f9f9",
+              "outline": "#767683",
+              "on-secondary-container": "#745c00",
+              "tertiary-container": "#5c1800",
+              "surface-bright": "#f9f9f9",
+              "inverse-primary": "#bdc2ff",
+              "error-container": "#ffdad6",
+              "on-background": "#1a1c1c",
+              "secondary-fixed-dim": "#e9c349",
+              "tertiary-fixed": "#ffdbd0",
+              "inverse-on-surface": "#f1f1f1",
+              "surface-container": "#eeeeee",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed": "#ffe088",
+              "surface-container-high": "#e8e8e8",
+              "on-secondary-fixed": "#241a00",
+              "on-secondary": "#ffffff",
+              "on-secondary-fixed-variant": "#574500",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "surface-container-highest": "#e2e2e2",
+              "on-error-container": "#93000a",
+              "inverse-surface": "#2f3131",
+              "background": "#f9f9f9",
+              "tertiary": "#380b00",
+              "error": "#ba1a1a",
+              "on-error": "#ffffff",
+              "on-primary-fixed-variant": "#343d96",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-container": "#8690ee",
+              "primary": "#000666",
+              "primary-container": "#1a237e",
+              "surface-container-low": "#f3f3f3",
+              "surface-variant": "#e2e2e2",
+              "on-surface": "#1a1c1c"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-shadow {
+            box-shadow: 0px 20px 40px rgba(26, 35, 126, 0.06);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased pb-32">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden">
+<img alt="Guest profile picture" class="w-full h-full object-cover" data-alt="Portrait of a sophisticated young man with a warm smile, wearing a designer linen shirt, soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrOx6Z-Cd1M53NRjfpX-kwyZaly-hUdHWxxEypJDb7ZDvVbDR87EU-uH9i9s1YB7zljESNelTHOK9zBPhgzkJOtwguixCniZD7mWiR2yKNrByIUpU7rP6N5Y9eR9uRjm-Dpm7_2jrC-e5K31aA9byrBsQj9rR9GgnVKKXKvpPtkCvJx65xlQB3tMr83CNO27yGdFjqbIdECZCGp7CsJIRiHqYnOovfDQCFLHxIz2S8xBua_BLpP84C7EGR3HI3YEd1fk2hdg91p5Q"/>
+</div>
+<span class="text-xl font-headline font-bold text-[#000666] tracking-tight">Tihtina</span>
+</div>
+<button class="bg-surface-container-high px-4 py-1.5 rounded-full text-[12px] font-bold font-label text-on-surface-variant hover:opacity-80 transition-opacity">
+            EN | አማርኛ
+        </button>
+</header>
+<main class="mt-24 px-6 max-w-2xl mx-auto">
+<!-- Hero Section -->
+<section class="mb-10">
+<span class="text-secondary font-label text-[11px] font-semibold uppercase tracking-[0.2em] mb-2 block">The Modern Concierge</span>
+<h1 class="text-4xl font-headline font-extrabold text-primary leading-tight tracking-tight">
+                Welcome back, Elias!
+            </h1>
+</section>
+<!-- Bento Grid Dashboard -->
+<div class="grid grid-cols-2 gap-4">
+<!-- My Bookings (Large Card) -->
+<div class="col-span-2 bg-surface-container-lowest rounded-xl p-6 editorial-shadow border border-outline-variant/15">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-headline font-bold text-primary">My Bookings</h2>
+<span class="material-symbols-outlined text-primary" data-icon="confirmation_number">confirmation_number</span>
+</div>
+<div class="space-y-6">
+<div class="flex gap-4 items-start">
+<div class="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
+<img alt="Hyatt Regency Addis" class="w-full h-full object-cover" data-alt="Modern luxury hotel facade at twilight with warm glowing windows and sleek architecture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSRsiAfc3JxVcL3gQ0lJn4BTW4VYx3680I8MkTZ9jQcblWuIG6JoaTxVXd-rXlR_batSketuxzN1S-PEWJYZAwDzTqliM3CKg0zkuH8lTP8pIuVBKpYK5AoT-Fcq-k8d_WAMcHtABRqNhB3ZKJCU6KfTPg4ClAdPAqVcml7LIOTY1YZ-6LvhApzkox0XxMIYWsPPPtihTvYLX4vEry2hbCtsvXdxnOlGJFMiaObff-tBllYx78HZC1-2Ab9ZMdIGzTBegsZFKbAWg"/>
+</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface">Hyatt Regency Addis</p>
+<p class="text-sm text-on-surface-variant">Oct 12 - Oct 15</p>
+<div class="mt-1 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-secondary px-2 py-0.5 bg-secondary-container/20 rounded-full">
+<span class="w-1.5 h-1.5 bg-secondary rounded-full"></span> Confirmed
+                            </div>
+</div>
+</div>
+<div class="flex gap-4 items-start opacity-70">
+<div class="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 grayscale">
+<img alt="Sheraton Boutique" class="w-full h-full object-cover" data-alt="Elegant classic hotel interior with ornate gold details and velvet furniture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBg3neRfwx73NWewogyh0kpwJl-RvMUBfvDw-e2t3t5MgMyQbMA3F8tZFJwbBNjyVwPrkjMEQoH9aN4i8dFAd8TShM5sLL2b9p4ef42suJ2okHwR1SS8Tr8AR5PdxxQgQF-i7T050CQR7pfmYs2jJWI72i2hnYUQxi80UyGLtYWawJCpTxXiORSrUNLAi3LqFnVdwEuPh65WQUtiV2pDj9X0SBV8nxWL9n3FGXknXlPx5IY_Adw6BtT64RH8FlYmgBZDR38rjNdMr4"/>
+</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface">Sheraton Boutique</p>
+<p class="text-sm text-on-surface-variant">Sept 20 - Sept 22</p>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mt-1">Past Stay</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Saved Experiences (Tall Card) -->
+<div class="bg-primary text-on-primary rounded-xl p-5 editorial-shadow flex flex-col justify-between aspect-[4/5]">
+<div>
+<span class="material-symbols-outlined text-secondary-container mb-4" data-icon="explore">explore</span>
+<h3 class="font-headline font-bold text-lg leading-tight">Saved Experiences</h3>
+</div>
+<div class="text-sm opacity-80">
+                    4 cultural tours curated for you
+                </div>
+</div>
+<!-- AI Concierge Chat (Compact Interactive) -->
+<div class="bg-secondary-container text-on-secondary-fixed rounded-xl p-5 editorial-shadow flex flex-col justify-between aspect-[4/5]">
+<div>
+<span class="material-symbols-outlined mb-4" data-icon="chat_bubble">chat_bubble</span>
+<h3 class="font-headline font-bold text-lg leading-tight">Ask your Concierge</h3>
+</div>
+<div class="flex items-center gap-2 font-bold text-xs">
+                    Start Chat <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</div>
+<!-- Saved Hotels -->
+<div class="bg-surface-container-low rounded-xl p-5 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-primary mb-3" data-icon="hotel">hotel</span>
+<h3 class="font-headline font-bold text-on-surface">Saved Hotels</h3>
+</div>
+<p class="text-xs text-on-surface-variant">8 properties</p>
+</div>
+<!-- My Itinerary -->
+<div class="bg-surface-container-low rounded-xl p-5 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-primary mb-3" data-icon="event_note">event_note</span>
+<h3 class="font-headline font-bold text-on-surface">Itinerary</h3>
+</div>
+<p class="text-xs text-on-surface-variant">Next: Oct 12</p>
+</div>
+<!-- Payment History -->
+<div class="col-span-2 bg-surface-container-lowest rounded-xl p-6 editorial-shadow border border-outline-variant/15 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-on-surface">Payment History</h3>
+<p class="text-xs text-on-surface-variant">Last transaction: 12,500 ETB</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Profile & Settings -->
+<div class="col-span-2 bg-surface-container-lowest rounded-xl p-6 editorial-shadow border border-outline-variant/15 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="person_setting">person</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-on-surface">Profile &amp; Settings</h3>
+<p class="text-xs text-on-surface-variant">Security, Language, and Bio</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Logout -->
+<div class="col-span-2 pt-6">
+<button class="w-full py-4 rounded-full border border-outline-variant text-on-surface-variant font-bold text-sm tracking-widest uppercase hover:bg-surface-container-low transition-colors">
+                    Logout
+                </button>
+</div>
+</div>
+</main>
+<!-- Floating Emergency Button -->
+<div class="fixed bottom-28 right-6 z-50 flex flex-col items-end gap-3">
+<button class="bg-error text-on-error px-5 py-3 rounded-full flex items-center gap-2 editorial-shadow">
+<span class="material-symbols-outlined" data-icon="emergency">emergency</span>
+<span class="font-label text-[11px] font-bold uppercase tracking-widest">SOS</span>
+</button>
+</div>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-6 mx-auto left-4 right-4 rounded-full z-40 h-16 bg-surface/80 backdrop-blur-xl editorial-shadow flex justify-around items-center px-4">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+</a>
+<!-- Hotels -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="hotel">hotel</span>
+</a>
+<!-- Experiences -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+</a>
+<!-- Bookings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="confirmation_number">confirmation_number</span>
+</a>
+<!-- Dashboard (Active) -->
+<a class="flex flex-col items-center justify-center text-[#000666] relative after:content-[''] after:absolute after:-bottom-2 after:w-1 after:h-1 after:bg-[#735c00] after:rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+</a>
+</nav>
+</body></html>

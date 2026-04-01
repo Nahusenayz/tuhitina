@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- TopAppBar Section -->
+    <header>
+        <div class="header-logo">
+            <h1 class="font-display">Tihtina</h1>
+        </div>
+        <button class="lang-switch-btn" id="lang-toggle-btn">EN | አማርኛ</button>
+    </header>
+
+    <main class="container fade-in">
+        <div class="card" style="display: flex; align-items: center; gap: 15px; background: linear-gradient(135deg, var(--primary-color), #0055aa); color: white; border: none; margin-bottom: 24px;">
+            <div style="width: 56px; height: 56px; background: var(--secondary-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 1.25rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <i class="fas fa-user"></i>
+            </div>
+            <div>
+                <h3 style="color: white; font-size: 1.1rem;" id="user-name-display">Guest User</h3>
+                <p style="margin: 0; opacity: 0.8; font-size: 12px;"><span id="loyalty-tier" class="uppercase font-bold">Standard</span> Member</p>
+            </div>
+        </div>
+        <!-- Welcome Section -->
+        <section class="mb-2">
+            <p class="text-xs uppercase tracking-widest" style="color: var(--outline);" data-i18n="guest_portal">Guest Portal</p>
+            <h2 style="font-size: 2rem; margin-top: 8px;">Hello, <span style="color: var(--secondary-color);" id="user-first-name">Guest</span></h2>
+        </section>
+
+        <!-- Bento Grid -->
+        <div class="bento-grid">
+            <!-- Active Booking (Large) -->
+            <div class="card col-span-2" style="padding: 24px; background: var(--primary-color); color: white; border: none; position: relative; overflow: hidden; margin-bottom: 0;">
+                <div style="position: relative; z-index: 1;">
+                    <span class="btn btn-secondary" style="padding: 4px 12px; font-size: 10px; margin-bottom: 12px;">STATUS</span>
+                    <h3 style="color: white; font-size: 1.25rem;">No Active Stay</h3>
+                    <p class="text-sm" style="opacity: 0.8;">Book a hotel to see details here.</p>
+                    <button class="btn btn-outline" style="margin-top: 16px; border-color: rgba(255,255,255,0.3); color: white; width: 100%;" onclick="window.location.href='hotels.html'">Book Now</button>
+                </div>
+                <i class="fas fa-hotel" style="position: absolute; bottom: -20px; right: -20px; font-size: 120px; opacity: 0.1; color: white;"></i>
+            </div>
+
+            <!-- AI Concierge -->
+            <div class="card" style="padding: 20px; background: var(--secondary-container); border: none; margin-bottom: 0;">
+                <i class="fas fa-robot" style="color: var(--secondary-color); font-size: 24px; margin-bottom: 12px;"></i>
+                <h4 style="font-size: 14px;">AI Concierge</h4>
+                <p class="text-xs" style="color: var(--on-surface-variant); margin-top: 4px;">Coming Soon</p>
+            </div>
+
+            <!-- Loyalty Points -->
+            <div class="card" style="padding: 20px; margin-bottom: 0;">
+                <i class="fas fa-award" style="color: #FFD700; font-size: 24px; margin-bottom: 12px;"></i>
+                <h4 style="font-size: 14px;">Loyalty</h4>
+                <p class="text-xs" style="color: var(--on-surface-variant); margin-top: 4px;"><span id="loyalty-points">0</span> Pts</p>
+            </div>
+
+            <!-- Saved Experiences -->
+            <div class="card" style="padding: 20px; margin-bottom: 0;">
+                <i class="fas fa-heart" style="color: var(--error); font-size: 24px; margin-bottom: 12px;"></i>
+                <h4 style="font-size: 14px;">Saved</h4>
+                <p class="text-xs" style="color: var(--on-surface-variant); margin-top: 4px;">0 Items</p>
+            </div>
+
+            <!-- Itinerary -->
+            <div class="card" style="padding: 20px; margin-bottom: 0;">
+                <i class="fas fa-route" style="color: var(--primary-color); font-size: 24px; margin-bottom: 12px;"></i>
+                <h4 style="font-size: 14px;">Itinerary</h4>
+                <p class="text-xs" style="color: var(--on-surface-variant); margin-top: 4px;">No upcoming plans</p>
+            </div>
+
+            <!-- Payments -->
+            <div class="card col-span-2" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0;">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div style="width: 44px; height: 44px; background: var(--surface-container-high); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-wallet" style="color: var(--primary-color);"></i>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 14px;">Payments</h4>
+                        <p class="text-xs" style="color: var(--on-surface-variant);">No recent transactions</p>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: var(--outline);"></i>
+            </div>
+        </div>
+
+        <!-- Logout Section -->
+        <section class="mt-2" style="margin-bottom: 40px;">
+            <div class="card" style="padding: 16px; display: flex; align-items: center; gap: 16px; border: 1px solid var(--outline-variant); background: transparent; cursor: pointer;" onclick="handleLogout()">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-sign-out-alt" style="color: #ef4444;"></i>
+                </div>
+                <div style="flex: 1;">
+                    <h4 style="font-size: 14px;" style="color: #ef4444;">Logout</h4>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Navigation Bar -->
+    <nav class="floating-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="hotels.html" class="nav-item">
+            <i class="fas fa-concierge-bell"></i>
+        </a>
+        <a href="experiences.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+        </a>
+        <a href="my-bookings.html" class="nav-item">
+            <i class="fas fa-calendar-check"></i>
+        </a>
+        <a href="dashboard.html" class="nav-item active">
+            <i class="fas fa-user-circle"></i>
+        </a>
+    </nav>
+
+    <script type="module">
+        import api from './js/api.js';
+        
+        async function loadProfile() {
+            const user = await api.getUserProfile();
+            if (user) {
+                const name = user.user_metadata?.full_name || user.email.split('@')[0];
+                document.getElementById('user-name-display').innerText = name;
+                document.getElementById('user-first-name').innerText = name.split(' ')[0];
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        window.handleLogout = async () => {
+            if(confirm('Are you sure you want to logout?')) {
+                // Since api.js doesn't have a logout method yet, we'll clear local storage
+                localStorage.removeItem('tihtina_user');
+                // You should ideally add a logout method to api.js using supabase.auth.signOut()
+                window.location.href = 'login.html';
+            }
+        };
+
+        loadProfile();
+    </script>
+</body>
+</html>

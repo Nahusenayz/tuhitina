@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="background: var(--primary-color);">
+    <div class="container fade-in" style="margin-top: 50px;">
+        <div class="card" style="padding: 30px;">
+            <div class="text-center mb-2">
+                <h1 style="color: var(--primary-color);">TIHTINA</h1>
+                <p>Guest Platform Login</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" placeholder="guest@example.com" required id="login-email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" placeholder="••••••••" required id="login-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+
+            <div class="text-center mt-2">
+                <p>Don't have an account? <a href="signup.html" style="color: var(--primary-color); font-weight: bold;">Sign Up</a></p>
+            </div>
+        </div>
+        
+        <div class="text-center mt-2">
+            <a href="index.html" style="color: white; text-decoration: underline;">Continue as Guest</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import api from './js/api.js';
+        
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            const loginBtn = e.target.querySelector('button');
+            loginBtn.disabled = true;
+            loginBtn.innerText = 'Logging in...';
+
+            const res = await api.login(email, password);
+            
+            if(res.success) {
+                window.location.href = 'index.html';
+            } else {
+                alert('Error: ' + res.error);
+                loginBtn.disabled = false;
+                loginBtn.innerText = 'Login';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- TopAppBar Section -->
+    <header>
+        <div class="header-logo">
+            <button onclick="history.back()" style="background: none; border: none; color: var(--primary-color); cursor: pointer;">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h1 class="font-display" style="margin-left: 12px;">Tihtina</h1>
+        </div>
+        <button class="lang-switch-btn" id="lang-toggle-btn">EN | አማርኛ</button>
+    </header>
+
+    <main class="container fade-in">
+        <h2 style="font-size: 1.5rem; margin-bottom: 24px;" data-i18n="bookings">Booking</h2>
+        
+        <div class="card" style="padding: 16px; border-left: 4px solid var(--secondary-color);">
+            <h3 style="font-size: 1.1rem;">Sheraton Addis</h3>
+            <p class="text-sm" style="color: var(--on-surface-variant);">Standard Deluxe Room</p>
+        </div>
+
+        <div class="card">
+            <div class="form-group">
+                <label data-i18n="select_date">Select Date</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <input type="date" class="form-control" name="checkin" value="2026-04-10">
+                    <input type="date" class="form-control" name="checkout" value="2026-04-12">
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 16px;">
+                <label data-i18n="guests">Guests</label>
+                <select class="form-control">
+                    <option>1 Guest</option>
+                    <option selected>2 Guests</option>
+                    <option>3 Guests</option>
+                    <option>4 Guests</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="font-size: 1rem; margin-bottom: 16px;" data-i18n="total_price">Total Price</h3>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <p class="text-sm">2 Nights x 18,500 ETB</p>
+                <p class="text-sm font-bold">37,000 ETB</p>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <p class="text-sm">Service Fee</p>
+                <p class="text-sm font-bold">1,500 ETB</p>
+            </div>
+            <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--outline-variant);">
+            <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1.25rem;">
+                <p>Total</p>
+                <p style="color: var(--secondary-color);">38,500 ETB</p>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-block mb-2" onclick="handleBooking()" data-i18n="confirm_booking">Confirm Booking</button>
+        <button class="btn btn-secondary btn-block" onclick="showTelebirr()" style="background: #00AEEF; color: white;" data-i18n="pay_telebirr">Pay with Telebirr</button>
+    </main>
+
+    <!-- Telebirr Mock Overlay -->
+    <div id="telebirr-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 20px;">
+        <div class="card" style="width: 100%; max-width: 400px; text-align: center;">
+            <img src="https://www.telebirr.et/content/dam/telebirr-logo.png" alt="Telebirr" style="width: 150px; margin-bottom: 20px;">
+            <h2>Payment for Tihtina</h2>
+            <p class="price" style="font-size: 1.5rem; margin-bottom: 20px;">9,500.00 ETB</p>
+            <div class="form-group" style="text-align: left;">
+                <label>Enter PIN</label>
+                <input type="password" class="form-control" placeholder="••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 10px;">
+            </div>
+            <button class="btn btn-primary btn-block" onclick="processPayment()" style="background: #00AEEF; border: none;">Pay Now</button>
+            <button class="btn btn-outline btn-block mt-1" onclick="hideTelebirr()">Cancel</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import api from './js/api.js';
+        import lang from './js/lang.js';
+        import './js/app.js';
+
+        window.handleBooking = async () => {
+            const res = await window.api.createBooking({hotelId: 1, hotelName: 'Sheraton Addis'});
+            if(res.success) {
+                alert('Booking Confirmed! ID: ' + res.bookingId);
+                window.location.href = 'my-bookings.html';
+            }
+        };
+
+        window.showTelebirr = () => {
+            document.getElementById('telebirr-overlay').style.display = 'flex';
+        };
+
+        window.hideTelebirr = () => {
+            document.getElementById('telebirr-overlay').style.display = 'none';
+        };
+
+        window.processPayment = () => {
+            alert('Payment Processing...');
+            setTimeout(async () => {
+                const res = await window.api.createBooking({hotelId: 1, hotelName: 'Sheraton Addis', paid: true});
+                if(res.success) {
+                    alert('Payment Successful! Booking Confirmed.');
+                    window.location.href = 'my-bookings.html';
+                }
+            }, 1500);
+        };
+    </script>
+</body>
+</html>

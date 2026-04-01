@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - Cultural Events</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo"><i class="fas fa-chevron-left"></i> EVENTS</a>
+        <div class="lang-switch">አማርኛ</div>
+    </header>
+
+    <div class="container fade-in">
+        <h1>Upcoming Cultural Events</h1>
+        <p>Experience the rich heritage of Ethiopia.</p>
+
+        <div class="card mt-2" style="border-left: 5px solid var(--secondary-color);">
+            <div style="display: flex; gap: 15px;">
+                <div style="text-align: center; background: #f8f9fa; padding: 10px; border-radius: 8px; min-width: 60px;">
+                    <h2 style="margin: 0;">11</h2>
+                    <p style="margin: 0; font-size: 0.8rem;">SEPT</p>
+                </div>
+                <div>
+                    <h3>Enkutatash (Ethiopian New Year)</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Nationwide / Meskel Square</p>
+                    <p style="font-size: 0.9rem; color: #666;">Celebrating the end of the rainy season and the blooming of yellow daisies.</p>
+                </div>
+            </div>
+            <button class="btn btn-outline btn-block mt-1">Remind Me</button>
+        </div>
+
+        <div class="card mt-2" style="border-left: 5px solid var(--secondary-color);">
+            <div style="display: flex; gap: 15px;">
+                <div style="text-align: center; background: #f8f9fa; padding: 10px; border-radius: 8px; min-width: 60px;">
+                    <h2 style="margin: 0;">27</h2>
+                    <p style="margin: 0; font-size: 0.8rem;">SEPT</p>
+                </div>
+                <div>
+                    <h3>Meskel Festival</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Addis Ababa (Meskel Square)</p>
+                    <p style="font-size: 0.9rem; color: #666;">Commemorating the finding of the True Cross with a massive bonfire (Demera).</p>
+                </div>
+            </div>
+            <button class="btn btn-outline btn-block mt-1">Book a Tour</button>
+        </div>
+
+        <div class="card mt-2" style="border-left: 5px solid var(--secondary-color);">
+            <div style="display: flex; gap: 15px;">
+                <div style="text-align: center; background: #f8f9fa; padding: 10px; border-radius: 8px; min-width: 60px;">
+                    <h2 style="margin: 0;">19</h2>
+                    <p style="margin: 0; font-size: 0.8rem;">JAN</p>
+                </div>
+                <div>
+                    <h3>Timket (Epiphany)</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Gondar & Addis Ababa</p>
+                    <p style="font-size: 0.9rem; color: #666;">The most colorful festival in Ethiopia, celebrating the baptism of Christ.</p>
+                </div>
+            </div>
+            <button class="btn btn-outline btn-block mt-1">Book Hotel in Gondar</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <!-- Navigation Bar -->
+    </nav>
+
+    <script type="module">
+        import api from './js/api.js';
+        import lang from './js/lang.js';
+        import './js/app.js';
+    </script>
+</body>
+</html>

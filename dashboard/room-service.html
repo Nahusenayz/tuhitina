@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - Room Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <a href="dashboard.html" class="logo"><i class="fas fa-chevron-left"></i> ROOM SERVICE</a>
+        <div class="lang-switch">አማርኛ</div>
+    </header>
+
+    <div class="container fade-in">
+        <h1 data-i18n="room_service">Room Service</h1>
+        <p>Order delicious Ethiopian and international cuisine to your room.</p>
+
+        <div class="card mt-2">
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <img src="https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=150&q=80" alt="Chechebsa" style="width: 80px; height: 80px; border-radius: 8px;">
+                <div style="flex: 1;">
+                    <h3>Traditional Chechebsa</h3>
+                    <p class="price">250 ETB</p>
+                </div>
+                <button class="btn btn-primary" onclick="addToOrder('Chechebsa', 250)">+</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=150&q=80" alt="Beyaynetu" style="width: 80px; height: 80px; border-radius: 8px;">
+                <div style="flex: 1;">
+                    <h3>Special Beyaynetu</h3>
+                    <p class="price">450 ETB</p>
+                </div>
+                <button class="btn btn-primary" onclick="addToOrder('Beyaynetu', 450)">+</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <img src="https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=150&q=80" alt="Coffee" style="width: 80px; height: 80px; border-radius: 8px;">
+                <div style="flex: 1;">
+                    <h3>Ethiopian Coffee</h3>
+                    <p class="price">120 ETB</p>
+                </div>
+                <button class="btn btn-primary" onclick="addToOrder('Coffee', 120)">+</button>
+            </div>
+        </div>
+
+        <div id="order-summary" class="card mt-2" style="display: none; border: 2px solid var(--secondary-color);">
+            <h3>Your Order</h3>
+            <div id="order-items"></div>
+            <hr style="margin: 10px 0;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                <p>Total</p>
+                <p id="order-total">0 ETB</p>
+            </div>
+            <button class="btn btn-primary btn-block mt-1" onclick="placeOrder()">Place Order</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import api from './js/api.js';
+        import lang from './js/lang.js';
+        import './js/app.js';
+
+        let order = [];
+
+        window.addToOrder = (name, price) => {
+            order.push({name, price});
+            updateSummary();
+        };
+
+        function updateSummary() {
+            const summary = document.getElementById('order-summary');
+            const items = document.getElementById('order-items');
+            const total = document.getElementById('order-total');
+            
+            if (order.length > 0) {
+                summary.style.display = 'block';
+                items.innerHTML = order.map(i => `<p>${i.name}: ${i.price} ETB</p>`).join('');
+                total.innerText = order.reduce((sum, i) => sum + i.price, 0) + ' ETB';
+            }
+        }
+
+        window.placeOrder = () => {
+            alert('Order placed successfully! It will be delivered to your room in 20 minutes.');
+            order = [];
+            document.getElementById('order-summary').style.display = 'none';
+        };
+    </script>
+</body>
+</html>

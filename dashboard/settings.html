@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tihtina Guest Platform - Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <a href="profile.html" class="logo"><i class="fas fa-chevron-left"></i> SETTINGS</a>
+        <div class="lang-switch">አማርኛ</div>
+    </header>
+
+    <div class="container fade-in">
+        <h1 data-i18n="settings">Settings</h1>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <label data-i18n="dark_mode">Dark Mode</label>
+                <div onclick="window.toggleTheme()" style="width: 50px; height: 26px; background: var(--primary-color); border-radius: 13px; position: relative; cursor: pointer;">
+                    <div style="width: 22px; height: 22px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.3s ease;"></div>
+                </div>
+            </div>
+            <hr style="margin: 10px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                <label>Push Notifications</label>
+                <input type="checkbox" checked>
+            </div>
+            <hr style="margin: 10px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                <label>Biometric Login</label>
+                <input type="checkbox">
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>App Information</h3>
+            <p>Version: 1.0.0 (Beta)</p>
+            <p>Environment: Development</p>
+            <p data-i18n="offline_mode">Working Offline - Reconnect later.</p>
+        </div>
+
+        <div class="card" style="border: 1px solid var(--emergency-red);">
+            <h3 style="color: var(--emergency-red);">Danger Zone</h3>
+            <button class="btn btn-outline btn-block mt-1" style="border-color: var(--emergency-red); color: var(--emergency-red);">Delete Account</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <!-- Bottom Nav Bar -->
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span data-i18n="home">Home</span>
+        </a>
+        <a href="hotels.html" class="nav-item">
+            <i class="fas fa-hotel"></i>
+            <span data-i18n="hotels">Hotels</span>
+        </a>
+        <a href="experiences.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+            <span data-i18n="experiences">Experiences</span>
+        </a>
+        <a href="my-bookings.html" class="nav-item">
+            <i class="fas fa-calendar-check"></i>
+            <span data-i18n="bookings">Bookings</span>
+        </a>
+        <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-user-circle"></i>
+            <span data-i18n="dashboard">Dashboard</span>
+        </a>
+    </nav>
+
+    <script type="module">
+        import api from './js/api.js';
+        import lang from './js/lang.js';
+        import './js/app.js';
+
+        // Override toggleTheme to update the UI switch
+        const originalToggle = window.toggleTheme;
+        window.toggleTheme = () => {
+            originalToggle();
+            const dot = document.querySelector('.card div div');
+            const currentTheme = document.body.getAttribute('data-theme');
+            if(currentTheme === 'dark') {
+                dot.style.transform = 'translateX(24px)';
+            } else {
+                dot.style.transform = 'translateX(0)';
+            }
+        };
+
+        // Initial state
+        document.addEventListener('DOMContentLoaded', () => {
+             const dot = document.querySelector('.card div div');
+            const currentTheme = document.body.getAttribute('data-theme');
+            if(currentTheme === 'dark') {
+                dot.style.transform = 'translateX(24px)';
+            }
+        });
+    </script>
+</body>
+</html>
