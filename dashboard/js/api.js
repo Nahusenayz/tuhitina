@@ -56,12 +56,13 @@ const api = {
 
     // Hotels
     getHotels: async () => {
-        console.log('API: Fetching hotels from Supabase');
+        console.log('API: Fetching approved hotels from Supabase');
         if (!supabase) return [];
 
         const { data, error } = await supabase
             .from('hotels')
-            .select('*');
+            .select('*')
+            .eq('status', 'approved');
 
         if (error) {
             console.error('Error fetching hotels:', error);

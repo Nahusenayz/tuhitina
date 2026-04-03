@@ -242,6 +242,11 @@ export const hotelDb = {
     if (error) throw error;
     return data || [];
   },
+  async getByOwner(ownerId: string): Promise<Hotel | null> {
+    const { data, error } = await supabase.from('hotels').select('*').eq('owner_id', ownerId).single();
+    if (error) return null;
+    return data;
+  },
   async create(hotel: Partial<Hotel>): Promise<Hotel> {
     const { data, error } = await supabase.from('hotels').insert([hotel]).select().single();
     if (error) {
@@ -262,8 +267,10 @@ export const hotelDb = {
 };
 
 export const experienceDb = {
-  async getAll(): Promise<Experience[]> {
-    const { data, error } = await supabase.from('experiences').select('*').order('created_at', { ascending: false });
+  async getAll(hotelId?: string): Promise<Experience[]> {
+    let query = supabase.from('experiences').select('*').order('created_at', { ascending: false });
+    if (hotelId) query = query.eq('hotel_id', hotelId);
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },
@@ -284,8 +291,10 @@ export const experienceDb = {
 };
 
 export const serviceDb = {
-  async getAll(): Promise<HospitalityService[]> {
-    const { data, error } = await supabase.from('services').select('*').order('created_at', { ascending: false });
+  async getAll(hotelId?: string): Promise<HospitalityService[]> {
+    let query = supabase.from('services').select('*').order('created_at', { ascending: false });
+    if (hotelId) query = query.eq('hotel_id', hotelId);
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },

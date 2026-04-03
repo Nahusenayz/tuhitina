@@ -11,6 +11,12 @@ import {
   X,
   LogOut,
   AlertTriangle,
+  LayoutDashboard,
+  Map,
+  Bell,
+  MessageSquare,
+  FileText,
+  Settings
 } from 'lucide-react';
 import GuestCheckin from './components/GuestCheckin';
 import GuestList from './components/GuestList';
@@ -25,28 +31,76 @@ import HotelManagement from './components/HotelManagement';
 import ExperienceManagement from './components/ExperienceManagement';
 import ServiceManagement from './components/ServiceManagement';
 import FeedbackManagement from './components/FeedbackManagement';
+import HotelRequests from './components/HotelRequests';
+import HotelDashboard from './components/HotelDashboard';
 import { supabase } from './lib/supabase';
 import { emergencyDb } from './lib/db';
-import { 
-  Plus, 
-  Map, 
-  Bell, 
-  MessageSquare, 
-  LayoutDashboard 
-} from 'lucide-react';
 
 const PROPERTY_ID = import.meta.env.VITE_PROPERTY_ID || 'demo-property-001';
 
-type TabType = 'overview' | 'checkin' | 'guests' | 'hotels' | 'experiences' | 'services' | 'feedback' | 'housekeeping' | 'pricing' | 'license' | 'sync' | 'emergency';
+type TabType = 'overview' | 'checkin' | 'guests' | 'hotels' | 'experiences' | 'services' | 'feedback' | 'housekeeping' | 'pricing' | 'license' | 'sync' | 'emergency' | 'requests' | 'hotel_dashboard';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('admin_auth') === 'true';
-  });
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+
   useEffect(() => {
+    // Initial Auth Check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        fetchProfile(session.user.id);
+      } else {
+        setLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        fetchProfile(session.user.id);
+      } else {
+        setUser(null);
+        setProfile(null);
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (error) console.error('Error fetching profile:', error);
+      else {
+        setProfile(data);
+        // Default tabs based on role
+        if (data.role === 'hotel_owner') {
+          setActiveTab('hotel_dashboard');
+        } else {
+          setActiveTab('overview');
+        }
+      }
+    } catch (err) {
+      console.error('Profile fetch failed:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+
     // Supabase Realtime Subscription for Guests
     const guestsChannel = supabase
       .channel('guests-changes')
@@ -68,7 +122,6 @@ function App() {
         { event: 'INSERT', schema: 'public', table: 'emergency_alerts' },
         async (payload) => {
           console.log('New emergency alert:', payload);
-          // Save to local DB first
           try {
             await emergencyDb.create(payload.new as any);
           } catch (err) {
@@ -83,16 +136,18 @@ function App() {
       supabase.removeChannel(guestsChannel);
       supabase.removeChannel(alertsChannel);
     };
-  }, []);
+  }, [user]);
 
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-    localStorage.setItem('admin_auth', 'true');
+  const handleLogin = (newUser: any) => {
+    setUser(newUser);
+    setLoading(true);
+    fetchProfile(newUser.id);
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('admin_auth');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setProfile(null);
   };
 
   const handleCheckinSuccess = () => {
@@ -100,11 +155,12 @@ function App() {
     setActiveTab('guests');
   };
 
-  const tabs = [
+  const adminTabs = [
     { id: 'overview' as TabType, name: 'Overview', icon: LayoutDashboard },
     { id: 'guests' as TabType, name: 'Guests', icon: Users },
     { id: 'checkin' as TabType, name: 'Check-in', icon: UserPlus },
     { id: 'hotels' as TabType, name: 'Hotels', icon: Hotel },
+    { id: 'requests' as TabType, name: 'Requests', icon: FileText },
     { id: 'experiences' as TabType, name: 'Experiences', icon: Map },
     { id: 'services' as TabType, name: 'Services', icon: Bell },
     { id: 'feedback' as TabType, name: 'Feedback', icon: MessageSquare },
@@ -115,56 +171,87 @@ function App() {
     { id: 'sync' as TabType, name: 'Cloud Sync', icon: Cloud },
   ];
 
-  if (!isAuthenticated) {
+  const hotelTabs = [
+    { id: 'hotel_dashboard' as TabType, name: 'My Hotel', icon: Hotel },
+    { id: 'guests' as TabType, name: 'Bookings', icon: ClipboardList },
+    { id: 'experiences' as TabType, name: 'Experiences', icon: Map },
+    { id: 'services' as TabType, name: 'Services', icon: Bell },
+    { id: 'emergency' as TabType, name: 'SOS Alerts', icon: AlertTriangle },
+    { id: 'sync' as TabType, name: 'Sync Status', icon: Cloud },
+  ];
+
+  const currentTabs = profile?.role === 'admin' ? adminTabs : hotelTabs;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="text-gray-500 font-medium">Initializing Tihtina OS...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
     return <AdminLogin onLogin={handleLogin} />;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-3">
-              <Hotel className="w-8 h-8 text-blue-600" />
+              <div className="bg-blue-600 p-2 rounded-xl">
+                <Hotel className="w-6 h-6 text-white" />
+              </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">TIHTINA-AI</h1>
-                <p className="text-xs text-gray-500">Offline-First Hospitality OS</p>
+                <h1 className="text-xl font-bold text-gray-900 tracking-tight">TIHTINA</h1>
+                <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest leading-none">
+                  AI Hospitality OS
+                </p>
               </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <button
-                onClick={handleLogout}
-                className="hidden md:flex items-center gap-2 text-gray-600 hover:text-red-600 transition-colors"
-                title="Logout"
-              >
-                <LogOut className="w-5 h-5" />
-                <span className="text-sm font-medium">Logout</span>
-              </button>
+              <div className="hidden lg:flex items-center gap-2 border-l border-gray-100 pl-4 ml-4">
+                <div className="text-right mr-2">
+                  <p className="text-xs font-bold text-gray-900">{profile?.full_name || 'User'}</p>
+                  <p className="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">{profile?.role}</p>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center justify-center p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                  title="Logout"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
 
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="md:hidden p-2 rounded-md hover:bg-gray-100"
+                className="lg:hidden p-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
               >
                 {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
 
-            <nav className="hidden md:flex gap-2">
-              {tabs.map((tab) => {
+            <nav className="hidden lg:flex gap-1">
+              {currentTabs.slice(0, 8).map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-semibold text-sm ${
                       activeTab === tab.id
-                        ? 'bg-blue-600 text-white'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 lg:scale-[1.02]'
+                        : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
-                    <span className="text-sm font-medium">{tab.name}</span>
+                    {tab.name}
                   </button>
                 );
               })}
@@ -172,8 +259,8 @@ function App() {
           </div>
 
           {menuOpen && (
-            <nav className="md:hidden pb-4 space-y-2">
-              {tabs.map((tab) => {
+            <nav className="lg:hidden py-4 space-y-1 border-t border-gray-50">
+              {currentTabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
@@ -182,30 +269,30 @@ function App() {
                       setActiveTab(tab.id);
                       setMenuOpen(false);
                     }}
-                    className={`w-full flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold text-sm ${
                       activeTab === tab.id
-                        ? 'bg-blue-600 text-white'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+                        : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
-                    <span className="text-sm font-medium">{tab.name}</span>
+                    <Icon className="w-5 h-5" />
+                    {tab.name}
                   </button>
                 );
               })}
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-2 px-4 py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-all font-bold text-sm"
               >
-                <LogOut className="w-4 h-4" />
-                <span className="text-sm font-medium">Logout Admin</span>
+                <LogOut className="w-5 h-5" />
+                Logout System
               </button>
             </nav>
           )}
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
         {activeTab === 'overview' && <DashboardOverview />}
         {activeTab === 'checkin' && (
           <GuestCheckin propertyId={PROPERTY_ID} onSuccess={handleCheckinSuccess} />
@@ -218,8 +305,10 @@ function App() {
           />
         )}
         {activeTab === 'hotels' && <HotelManagement />}
-        {activeTab === 'experiences' && <ExperienceManagement />}
-        {activeTab === 'services' && <ServiceManagement />}
+        {activeTab === 'requests' && <HotelRequests />}
+        {activeTab === 'hotel_dashboard' && <HotelDashboard />}
+        {activeTab === 'experiences' && <ExperienceManagement hotelId={profile?.hotel_id} />}
+        {activeTab === 'services' && <ServiceManagement hotelId={profile?.hotel_id} />}
         {activeTab === 'feedback' && <FeedbackManagement />}
         {activeTab === 'housekeeping' && <Housekeeping propertyId={PROPERTY_ID} />}
         {activeTab === 'pricing' && <DynamicPricing propertyId={PROPERTY_ID} />}
@@ -228,10 +317,10 @@ function App() {
         {activeTab === 'emergency' && <EmergencyAlerts key={refreshTrigger} />}
       </main>
 
-      <footer className="bg-white border-t border-gray-200 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <p className="text-center text-sm text-gray-500">
-            TIHTINA-AI v1.0 - Offline-First Hospitality Management System
+      <footer className="bg-white border-t border-gray-100 py-6">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-[10px] text-gray-400 font-mono tracking-widest uppercase">
+            TIHTINA-AI v1.2 // EXCLUSIVE PROPERTY MANAGEMENT ECOSYSTEM
           </p>
         </div>
       </footer>
