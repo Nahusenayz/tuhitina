@@ -74,6 +74,18 @@ function App() {
   }, []);
 
   const fetchProfile = async (userId: string) => {
+    // Check for hardcoded admin first
+    if (userId === '00000000-0000-0000-0000-000000000000') {
+      setProfile({ 
+        id: userId, 
+        full_name: 'Super Admin', 
+        role: 'admin' 
+      });
+      setActiveTab('overview');
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -173,11 +185,8 @@ function App() {
 
   const hotelTabs = [
     { id: 'hotel_dashboard' as TabType, name: 'My Hotel', icon: Hotel },
-    { id: 'guests' as TabType, name: 'Bookings', icon: ClipboardList },
     { id: 'experiences' as TabType, name: 'Experiences', icon: Map },
     { id: 'services' as TabType, name: 'Services', icon: Bell },
-    { id: 'emergency' as TabType, name: 'SOS Alerts', icon: AlertTriangle },
-    { id: 'sync' as TabType, name: 'Sync Status', icon: Cloud },
   ];
 
   const currentTabs = profile?.role === 'admin' ? adminTabs : hotelTabs;

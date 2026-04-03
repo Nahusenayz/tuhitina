@@ -20,6 +20,17 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
     setLoading(true);
     setError('');
     
+    // Hardcoded Admin Bypass
+    if (email === 'user-admin' && password === 'pass-admin123') {
+      onLogin({ 
+        id: '00000000-0000-0000-0000-000000000000', 
+        email: 'admin@tihtina.ai',
+        user_metadata: { role: 'admin' } 
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email,
