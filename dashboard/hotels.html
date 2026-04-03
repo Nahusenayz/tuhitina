@@ -63,12 +63,18 @@
         </a>
     </nav>
 
+    <!-- Tihtina AI Chatbot -->
+    <button id="chatbot-toggle-btn" class="chatbot-btn">
+        <i class="fas fa-wand-magic-sparkles"></i>
+    </button>
+
     <!-- SOS Button -->
     <a href="emergency.html" class="sos-btn">
         <i class="fas fa-sos"></i>
         <span style="font-weight: 800;">SOS</span>
     </a>
 
+    <script src="js/chatbot.js"></script>
     <script type="module">
         import api from './js/api.js';
         
@@ -100,7 +106,8 @@
                                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                                     <div>
                                         <h3 style="font-size: 1.25rem;">${hotel.name}</h3>
-                                        <p class="text-sm" style="color: var(--on-surface-variant); display: flex; align-items: center; gap: 4px; border:none;">
+                                        <p class="text-xs" style="color: var(--on-surface-variant); margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;">${hotel.description || 'Modern luxury property offering exceptional services.'}</p>
+                                        <p class="text-sm" style="color: var(--on-surface-variant); display: flex; align-items: center; gap: 4px; margin-top: 8px; border:none;">
                                             <i class="fas fa-map-marker-alt" style="font-size: 10px;"></i>
                                             ${hotel.location}
                                         </p>

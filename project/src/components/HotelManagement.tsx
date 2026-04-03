@@ -8,7 +8,7 @@ export default function HotelManagement() {
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
-  const [editingHotel, setEditingHotel] = useState<string | null>(null);
+  const [editingHotel, setEditingHotel] = useState<Hotel | null>(null);
   const [newHotel, setNewHotel] = useState<Partial<Hotel>>({
     name: '',
     location: '',
@@ -58,6 +58,19 @@ export default function HotelManagement() {
     }
   };
 
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingHotel) return;
+    try {
+      await hotelDb.update(editingHotel.id, editingHotel);
+      setEditingHotel(null);
+      fetchHotels();
+    } catch (error: any) {
+      console.error('Error updating hotel:', error);
+      alert(`Failed to update hotel: ${error.message || 'Unknown error'}`);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this hotel listing? This will remove all associated data.')) return;
     try {
@@ -97,10 +110,12 @@ export default function HotelManagement() {
         </button>
       </div>
 
-      {isAdding && (
+      {(isAdding || editingHotel) && (
         <div className="bg-white rounded-3xl shadow-xl border border-blue-50 p-8 animate-in fade-in slide-in-from-top-4 duration-300">
-          <h3 className="text-xl font-bold text-gray-900 mb-6">Create New Listing</h3>
-          <form onSubmit={handleCreate} className="space-y-6">
+          <h3 className="text-xl font-bold text-gray-900 mb-6">
+            {editingHotel ? `Editing ${editingHotel.name}` : 'Create New Listing'}
+          </h3>
+          <form onSubmit={editingHotel ? handleUpdate : handleCreate} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div className="space-y-2">
@@ -108,8 +123,10 @@ export default function HotelManagement() {
                   <input
                     required
                     type="text"
-                    value={newHotel.name}
-                    onChange={(e) => setNewHotel({ ...newHotel, name: e.target.value })}
+                    value={editingHotel ? editingHotel.name : newHotel.name}
+                    onChange={(e) => editingHotel 
+                      ? setEditingHotel({ ...editingHotel, name: e.target.value })
+                      : setNewHotel({ ...newHotel, name: e.target.value })}
                     className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-gray-50/50"
                     placeholder="e.g. Grand Ethiopian Resort"
                   />
@@ -120,8 +137,10 @@ export default function HotelManagement() {
                     <input
                       required
                       type="text"
-                      value={newHotel.location}
-                      onChange={(e) => setNewHotel({ ...newHotel, location: e.target.value })}
+                      value={editingHotel ? editingHotel.location : newHotel.location}
+                      onChange={(e) => editingHotel
+                        ? setEditingHotel({ ...editingHotel, location: e.target.value })
+                        : setNewHotel({ ...newHotel, location: e.target.value })}
                       className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-gray-50/50"
                       placeholder="Addis Ababa"
                     />
@@ -131,8 +150,10 @@ export default function HotelManagement() {
                     <input
                       required
                       type="number"
-                      value={newHotel.price_per_night}
-                      onChange={(e) => setNewHotel({ ...newHotel, price_per_night: Number(e.target.value) })}
+                      value={editingHotel ? editingHotel.price_per_night : newHotel.price_per_night}
+                      onChange={(e) => editingHotel
+                        ? setEditingHotel({ ...editingHotel, price_per_night: Number(e.target.value) })
+                        : setNewHotel({ ...newHotel, price_per_night: Number(e.target.value) })}
                       className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-gray-50/50"
                     />
                   </div>
@@ -140,8 +161,10 @@ export default function HotelManagement() {
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-700 ml-1">Description</label>
                   <textarea
-                    value={newHotel.description}
-                    onChange={(e) => setNewHotel({ ...newHotel, description: e.target.value })}
+                    value={editingHotel ? editingHotel.description : newHotel.description}
+                    onChange={(e) => editingHotel
+                      ? setEditingHotel({ ...editingHotel, description: e.target.value })
+                      : setNewHotel({ ...newHotel, description: e.target.value })}
                     className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-gray-50/50 resize-none"
                     rows={4}
                     placeholder="Describe the property's unique features..."
@@ -152,8 +175,10 @@ export default function HotelManagement() {
               <div className="space-y-6">
                 <ImageUpload 
                   label="Primary Property Photo"
-                  currentImage={newHotel.image_url}
-                  onUpload={(url) => setNewHotel({ ...newHotel, image_url: url })}
+                  currentImage={editingHotel ? editingHotel.image_url : newHotel.image_url}
+                  onUpload={(url) => editingHotel
+                    ? setEditingHotel({ ...editingHotel, image_url: url })
+                    : setNewHotel({ ...newHotel, image_url: url })}
                 />
                 <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
                   <div className="flex gap-2">
@@ -169,7 +194,10 @@ export default function HotelManagement() {
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-50">
               <button
                 type="button"
-                onClick={() => setIsAdding(false)}
+                onClick={() => {
+                  setIsAdding(false);
+                  setEditingHotel(null);
+                }}
                 className="px-6 py-2 rounded-xl text-gray-500 hover:bg-gray-50 font-bold transition-all"
               >
                 Cancel
@@ -178,7 +206,7 @@ export default function HotelManagement() {
                 type="submit"
                 className="px-8 py-2 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95"
               >
-                Create Listing
+                {editingHotel ? 'Save Changes' : 'Create Listing'}
               </button>
             </div>
           </form>
@@ -226,7 +254,6 @@ export default function HotelManagement() {
                     </p>
                   </div>
                   <div className="flex -space-x-2">
-                    {/* Placeholder for amenities icons summary */}
                     <div className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center">
                       <HotelIcon className="w-3.5 h-3.5 text-gray-400" />
                     </div>
@@ -234,7 +261,10 @@ export default function HotelManagement() {
                 </div>
               </div>
               <div className="flex gap-2 pt-6 border-t border-gray-50">
-                <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-gray-50 text-gray-600 hover:bg-blue-50 hover:text-blue-600 font-bold transition-all active:scale-95">
+                <button 
+                  onClick={() => setEditingHotel(hotel)}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-gray-50 text-gray-600 hover:bg-blue-50 hover:text-blue-600 font-bold transition-all active:scale-95"
+                >
                   <Edit2 className="w-4 h-4" />
                   Edit
                 </button>

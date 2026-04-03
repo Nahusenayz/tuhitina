@@ -12,6 +12,7 @@ export default function ServiceManagement({ hotelId }: ServiceManagementProps) {
   const [services, setServices] = useState<HospitalityService[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+  const [editingService, setEditingService] = useState<HospitalityService | null>(null);
   const [newService, setNewService] = useState<Partial<HospitalityService>>({
     name: '',
     description: '',
@@ -58,6 +59,19 @@ export default function ServiceManagement({ hotelId }: ServiceManagementProps) {
     }
   };
 
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingService) return;
+    try {
+      await serviceDb.update(editingService.id, editingService);
+      setEditingService(null);
+      fetchServices();
+    } catch (error: any) {
+      console.error('Error updating service:', error);
+      alert(`Failed to update service: ${error.message || 'Unknown error'}`);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this service?')) return;
     try {
@@ -96,9 +110,12 @@ export default function ServiceManagement({ hotelId }: ServiceManagementProps) {
         </button>
       </div>
 
-      {isAdding && (
+      {(isAdding || editingService) && (
         <div className="bg-white rounded-3xl shadow-xl border border-blue-50 p-8 animate-in fade-in slide-in-from-top-4 duration-300">
-          <form onSubmit={handleCreate} className="space-y-6">
+          <h3 className="text-xl font-bold text-gray-900 mb-6">
+            {editingService ? `Editing ${editingService.name}` : 'Create New Service'}
+          </h3>
+          <form onSubmit={editingService ? handleUpdate : handleCreate} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div className="space-y-2">
@@ -106,8 +123,10 @@ export default function ServiceManagement({ hotelId }: ServiceManagementProps) {
                   <input
                     required
                     type="text"
-                    value={newService.name}
-                    onChange={(e) => setNewService({ ...newService, name: e.target.value })}
+                    value={editingService ? editingService.name : newService.name}
+                    onChange={(e) => editingService 
+                      ? setEditingService({ ...editingService, name: e.target.value })
+                      : setNewService({ ...newService, name: e.target.value })}
                     className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-gray-50/50"
                     placeholder="e.g. VIP Airport Transfer"
                   />
@@ -116,8 +135,10 @@ export default function ServiceManagement({ hotelId }: ServiceManagementProps) {
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-gray-700 ml-1">Category</label>
                     <select
-                      value={newService.category}
-                      onChange={(e) => setNewService({ ...newService, category: e.target.value })}
+                      value={editingService ? editingService.category : newService.category}
+                      onChange={(e) => editingService 
+                        ? setEditingService({ ...editingService, category: e.target.value })
+                        : setNewService({ ...newService, category: e.target.value })}
                       className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-gray-50/50"
                     >
                       <option value="Amenity">Amenity</option>
@@ -132,8 +153,10 @@ export default function ServiceManagement({ hotelId }: ServiceManagementProps) {
                     <input
                       required
                       type="number"
-                      value={newService.price}
-                      onChange={(e) => setNewService({ ...newService, price: Number(e.target.value) })}
+                      value={editingService ? editingService.price : newService.price}
+                      onChange={(e) => editingService 
+                        ? setEditingService({ ...editingService, price: Number(e.target.value) })
+                        : setNewService({ ...newService, price: Number(e.target.value) })}
                       className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-gray-50/50"
                     />
                   </div>
@@ -142,8 +165,10 @@ export default function ServiceManagement({ hotelId }: ServiceManagementProps) {
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={newService.is_available}
-                      onChange={(e) => setNewService({ ...newService, is_available: e.target.checked })}
+                      checked={editingService ? editingService.is_available : newService.is_available}
+                      onChange={(e) => editingService 
+                        ? setEditingService({ ...editingService, is_available: e.target.checked })
+                        : setNewService({ ...newService, is_available: e.target.checked })}
                       className="sr-only peer"
                     />
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -155,14 +180,18 @@ export default function ServiceManagement({ hotelId }: ServiceManagementProps) {
               <div className="space-y-6">
                 <ImageUpload 
                   label="Service Icon/Photo"
-                  currentImage={newService.image_url}
-                  onUpload={(url) => setNewService({ ...newService, image_url: url })}
+                  currentImage={editingService ? editingService.image_url : newService.image_url}
+                  onUpload={(url) => editingService 
+                    ? setEditingService({ ...editingService, image_url: url })
+                    : setNewService({ ...newService, image_url: url })}
                 />
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-700 ml-1">Description</label>
                   <textarea
-                    value={newService.description}
-                    onChange={(e) => setNewService({ ...newService, description: e.target.value })}
+                    value={editingService ? editingService.description : newService.description}
+                    onChange={(e) => editingService 
+                      ? setEditingService({ ...editingService, description: e.target.value })
+                      : setNewService({ ...newService, description: e.target.value })}
                     className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-gray-50/50 resize-none"
                     rows={3}
                     placeholder="Describe what's included in this service..."
@@ -173,7 +202,10 @@ export default function ServiceManagement({ hotelId }: ServiceManagementProps) {
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-50">
               <button
                 type="button"
-                onClick={() => setIsAdding(false)}
+                onClick={() => {
+                  setIsAdding(false);
+                  setEditingService(null);
+                }}
                 className="px-6 py-2 rounded-xl text-gray-500 hover:bg-gray-50 font-bold transition-all"
               >
                 Cancel
@@ -182,7 +214,7 @@ export default function ServiceManagement({ hotelId }: ServiceManagementProps) {
                 type="submit"
                 className="px-8 py-2 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95"
               >
-                Create Service
+                {editingService ? 'Save Changes' : 'Create Service'}
               </button>
             </div>
           </form>
@@ -251,7 +283,14 @@ export default function ServiceManagement({ hotelId }: ServiceManagementProps) {
                     </td>
                     <td className="px-8 py-5 text-right">
                       <div className="flex justify-end gap-2">
-                        <button className="p-2 text-gray-300 hover:text-blue-600 rounded-xl hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-100 transition-all">
+                        <button 
+                          onClick={() => {
+                            setEditingService(service);
+                            setIsAdding(false);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className="p-2 text-gray-300 hover:text-blue-600 rounded-xl hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-100 transition-all"
+                        >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button

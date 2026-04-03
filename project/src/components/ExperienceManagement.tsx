@@ -12,6 +12,7 @@ export default function ExperienceManagement({ hotelId }: ExperienceManagementPr
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+  const [editingExperience, setEditingExperience] = useState<Experience | null>(null);
   const [newExperience, setNewExperience] = useState<Partial<Experience>>({
     name: '',
     location: '',
@@ -60,6 +61,19 @@ export default function ExperienceManagement({ hotelId }: ExperienceManagementPr
     }
   };
 
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingExperience) return;
+    try {
+      await experienceDb.update(editingExperience.id, editingExperience);
+      setEditingExperience(null);
+      fetchExperiences();
+    } catch (error: any) {
+      console.error('Error updating experience:', error);
+      alert(`Failed to update experience: ${error.message || 'Unknown error'}`);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this experience?')) return;
     try {
@@ -98,9 +112,12 @@ export default function ExperienceManagement({ hotelId }: ExperienceManagementPr
         </button>
       </div>
 
-      {isAdding && (
+      {(isAdding || editingExperience) && (
         <div className="bg-white rounded-3xl shadow-xl border border-purple-50 p-8 animate-in fade-in slide-in-from-top-4 duration-300">
-          <form onSubmit={handleCreate} className="space-y-6">
+          <h3 className="text-xl font-bold text-gray-900 mb-6">
+            {editingExperience ? `Editing ${editingExperience.name}` : 'Create New Experience'}
+          </h3>
+          <form onSubmit={editingExperience ? handleUpdate : handleCreate} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div className="space-y-2">
@@ -108,8 +125,10 @@ export default function ExperienceManagement({ hotelId }: ExperienceManagementPr
                   <input
                     required
                     type="text"
-                    value={newExperience.name}
-                    onChange={(e) => setNewExperience({ ...newExperience, name: e.target.value })}
+                    value={editingExperience ? editingExperience.name : newExperience.name}
+                    onChange={(e) => editingExperience
+                      ? setEditingExperience({ ...editingExperience, name: e.target.value })
+                      : setNewExperience({ ...newExperience, name: e.target.value })}
                     className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-gray-50/50"
                     placeholder="e.g. Traditional Coffee Ceremony"
                   />
@@ -118,8 +137,10 @@ export default function ExperienceManagement({ hotelId }: ExperienceManagementPr
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-gray-700 ml-1">Category</label>
                     <select
-                      value={newExperience.category}
-                      onChange={(e) => setNewExperience({ ...newExperience, category: e.target.value })}
+                      value={editingExperience ? editingExperience.category : newExperience.category}
+                      onChange={(e) => editingExperience
+                        ? setEditingExperience({ ...editingExperience, category: e.target.value })
+                        : setNewExperience({ ...newExperience, category: e.target.value })}
                       className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-gray-50/50"
                     >
                       <option value="Cultural">Cultural</option>
@@ -134,8 +155,10 @@ export default function ExperienceManagement({ hotelId }: ExperienceManagementPr
                     <input
                       required
                       type="text"
-                      value={newExperience.location}
-                      onChange={(e) => setNewExperience({ ...newExperience, location: e.target.value })}
+                      value={editingExperience ? editingExperience.location : newExperience.location}
+                      onChange={(e) => editingExperience
+                        ? setEditingExperience({ ...editingExperience, location: e.target.value })
+                        : setNewExperience({ ...newExperience, location: e.target.value })}
                       className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-gray-50/50"
                       placeholder="e.g. Hotel Garden / City Center"
                     />
@@ -146,8 +169,10 @@ export default function ExperienceManagement({ hotelId }: ExperienceManagementPr
                   <input
                     required
                     type="number"
-                    value={newExperience.price}
-                    onChange={(e) => setNewExperience({ ...newExperience, price: Number(e.target.value) })}
+                    value={editingExperience ? editingExperience.price : newExperience.price}
+                    onChange={(e) => editingExperience
+                      ? setEditingExperience({ ...editingExperience, price: Number(e.target.value) })
+                      : setNewExperience({ ...newExperience, price: Number(e.target.value) })}
                     className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-gray-50/50"
                   />
                 </div>
@@ -156,14 +181,18 @@ export default function ExperienceManagement({ hotelId }: ExperienceManagementPr
               <div className="space-y-6">
                 <ImageUpload 
                   label="Experience Feature Photo"
-                  currentImage={newExperience.image_url}
-                  onUpload={(url) => setNewExperience({ ...newExperience, image_url: url })}
+                  currentImage={editingExperience ? editingExperience.image_url : newExperience.image_url}
+                  onUpload={(url) => editingExperience
+                    ? setEditingExperience({ ...editingExperience, image_url: url })
+                    : setNewExperience({ ...newExperience, image_url: url })}
                 />
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-700 ml-1">Description</label>
                   <textarea
-                    value={newExperience.description}
-                    onChange={(e) => setNewExperience({ ...newExperience, description: e.target.value })}
+                    value={editingExperience ? editingExperience.description : newExperience.description}
+                    onChange={(e) => editingExperience
+                      ? setEditingExperience({ ...editingExperience, description: e.target.value })
+                      : setNewExperience({ ...newExperience, description: e.target.value })}
                     className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-gray-50/50 resize-none"
                     rows={3}
                     placeholder="Provide details about the activity..."
@@ -174,7 +203,10 @@ export default function ExperienceManagement({ hotelId }: ExperienceManagementPr
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-50">
               <button
                 type="button"
-                onClick={() => setIsAdding(false)}
+                onClick={() => {
+                  setIsAdding(false);
+                  setEditingExperience(null);
+                }}
                 className="px-6 py-2 rounded-xl text-gray-500 hover:bg-gray-50 font-bold transition-all"
               >
                 Cancel
@@ -183,7 +215,7 @@ export default function ExperienceManagement({ hotelId }: ExperienceManagementPr
                 type="submit"
                 className="px-8 py-2 rounded-xl bg-purple-600 text-white font-bold hover:bg-purple-700 shadow-lg shadow-purple-200 transition-all active:scale-95"
               >
-                Create Experience
+                {editingExperience ? 'Save Changes' : 'Create Experience'}
               </button>
             </div>
           </form>
@@ -238,7 +270,14 @@ export default function ExperienceManagement({ hotelId }: ExperienceManagementPr
                   </div>
                 </div>
                 <div className="flex gap-2 pt-6 border-t border-gray-50">
-                  <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-gray-50 text-gray-600 hover:bg-purple-50 hover:text-purple-600 font-bold transition-all active:scale-95">
+                  <button 
+                    onClick={() => {
+                      setEditingExperience(exp);
+                      setIsAdding(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-gray-50 text-gray-600 hover:bg-purple-50 hover:text-purple-600 font-bold transition-all active:scale-95"
+                  >
                     <Edit2 className="w-4 h-4" />
                     Edit
                   </button>
