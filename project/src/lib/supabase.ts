@@ -1,7 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  const missing = [];
+  if (!supabaseUrl) missing.push('VITE_SUPABASE_URL');
+  if (!supabaseAnonKey) missing.push('VITE_SUPABASE_ANON_KEY');
+  
+  throw new Error(
+    `Missing environment variables: ${missing.join(', ')}. ` +
+    'If you are deploying to Vercel, ensure these are added in the Project Settings > Environment Variables ' +
+    'and that they are prefixed with "VITE_".'
+  );
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -53,6 +65,40 @@ export async function syncToCloud(data: {
     } else {
       results.pricingHistory = data.pricingHistory.length;
     }
+  }
+
+  return results;
+}
+
+export async function fetchFromCloud() {
+  const results = {
+    guests: [] as any[],
+    bookings: [] as any[],
+    errors: [] as string[],
+  };
+
+  try {
+    const { data: guests, error: guestError } = await supabase
+      .from('guests')
+      .select('*');
+
+    if (guestError) {
+      results.errors.push(`Guests fetch: ${guestError.message}`);
+    } else {
+      results.guests = guests || [];
+    }
+
+    const { data: bookings, error: bookingError } = await supabase
+      .from('bookings')
+      .select('*');
+
+    if (bookingError) {
+      results.errors.push(`Bookings fetch: ${bookingError.message}`);
+    } else {
+      results.bookings = bookings || [];
+    }
+  } catch (error) {
+    results.errors.push(`General fetch error: ${error instanceof Error ? error.message : 'Unknown'}`);
   }
 
   return results;

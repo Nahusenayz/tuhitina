@@ -149,8 +149,44 @@ const api = {
     getUserProfile: async () => {
         console.log('API: Fetching user profile');
         if (!supabase) return null;
-        const { data } = await supabase.auth.getUser();
-        return data.user || JSON.parse(localStorage.getItem('tihtina_user'));
+        
+        const { data: authData } = await supabase.auth.getUser();
+        const user = authData.user || JSON.parse(localStorage.getItem('tihtina_user'));
+        
+        if (!user) return null;
+
+        // Fetch additional info from guests table
+        const { data: guestData, error } = await supabase
+            .from('guests')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+        if (error) {
+            console.error('Error fetching guest profile:', error);
+            return user; // Return auth user as fallback
+        }
+
+        return { ...user, ...guestData };
+    },
+
+    updateUserProfile: async (userData) => {
+        console.log('API: Updating user profile', userData);
+        if (!supabase) return { success: false, error: 'Supabase not initialized' };
+
+        const { data: authData } = await supabase.auth.getUser();
+        if (!authData.user) return { success: false, error: 'Not logged in' };
+
+        const { error } = await supabase
+            .from('guests')
+            .update({
+                full_name: userData.name,
+                phone: userData.phone
+            })
+            .eq('id', authData.user.id);
+
+        if (error) return { success: false, error: error.message };
+        return { success: true };
     }
 };
 

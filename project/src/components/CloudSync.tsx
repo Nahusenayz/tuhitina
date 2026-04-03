@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Cloud, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
 import { guestDb, housekeepingDb, execute } from '../lib/db';
-import { syncToCloud } from '../lib/supabase';
+import { syncToCloud, fetchFromCloud } from '../lib/supabase';
 
 interface CloudSyncProps {
   propertyId: string;
@@ -64,6 +64,32 @@ export default function CloudSync({ propertyId }: CloudSyncProps) {
         pricingHistory: pricingToSync,
       });
 
+      // --- NEW: Fetch from Cloud ---
+      const cloudData = await fetchFromCloud();
+      if (cloudData.guests.length > 0) {
+        for (const guest of cloudData.guests) {
+          // Map full_name to name and insert/update local DB
+          await execute(
+            `INSERT OR REPLACE INTO guests (id, property_id, name, phone, email, room_number, status, created_at, synced_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              guest.id,
+              guest.property_id || propertyId,
+              guest.full_name || guest.name,
+              guest.phone,
+              guest.email,
+              guest.room_number || 'TBD',
+              guest.status || 'checked_out',
+              guest.created_at,
+              new Date().toISOString()
+            ]
+          );
+        }
+      }
+      
+      results.errors.push(...cloudData.errors);
+      // ----------------------------
+
       if (results.errors.length === 0) {
         for (const guest of unsyncedGuests) {
           await guestDb.markSynced(guest.id);
@@ -71,7 +97,7 @@ export default function CloudSync({ propertyId }: CloudSyncProps) {
 
         setSyncResult({
           success: true,
-          message: 'Data synced successfully!',
+          message: 'Data synced successfully (bidirectional)!',
           details: results,
         });
       } else {
