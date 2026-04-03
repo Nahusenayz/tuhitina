@@ -20,18 +20,30 @@ import LicenseActivation from './components/LicenseActivation';
 import CloudSync from './components/CloudSync';
 import EmergencyAlerts from './components/EmergencyAlerts';
 import AdminLogin from './components/AdminLogin';
+import DashboardOverview from './components/DashboardOverview';
+import HotelManagement from './components/HotelManagement';
+import ExperienceManagement from './components/ExperienceManagement';
+import ServiceManagement from './components/ServiceManagement';
+import FeedbackManagement from './components/FeedbackManagement';
 import { supabase } from './lib/supabase';
 import { emergencyDb } from './lib/db';
+import { 
+  Plus, 
+  Map, 
+  Bell, 
+  MessageSquare, 
+  LayoutDashboard 
+} from 'lucide-react';
 
 const PROPERTY_ID = import.meta.env.VITE_PROPERTY_ID || 'demo-property-001';
 
-type TabType = 'checkin' | 'guests' | 'housekeeping' | 'pricing' | 'license' | 'sync' | 'emergency';
+type TabType = 'overview' | 'checkin' | 'guests' | 'hotels' | 'experiences' | 'services' | 'feedback' | 'housekeeping' | 'pricing' | 'license' | 'sync' | 'emergency';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem('admin_auth') === 'true';
   });
-  const [activeTab, setActiveTab] = useState<TabType>('checkin');
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
@@ -89,13 +101,18 @@ function App() {
   };
 
   const tabs = [
-    { id: 'checkin' as TabType, name: 'Check-in', icon: UserPlus },
+    { id: 'overview' as TabType, name: 'Overview', icon: LayoutDashboard },
     { id: 'guests' as TabType, name: 'Guests', icon: Users },
+    { id: 'checkin' as TabType, name: 'Check-in', icon: UserPlus },
+    { id: 'hotels' as TabType, name: 'Hotels', icon: Hotel },
+    { id: 'experiences' as TabType, name: 'Experiences', icon: Map },
+    { id: 'services' as TabType, name: 'Services', icon: Bell },
+    { id: 'feedback' as TabType, name: 'Feedback', icon: MessageSquare },
+    { id: 'emergency' as TabType, name: 'Emergency', icon: AlertTriangle },
     { id: 'housekeeping' as TabType, name: 'Housekeeping', icon: ClipboardList },
     { id: 'pricing' as TabType, name: 'Pricing', icon: DollarSign },
     { id: 'license' as TabType, name: 'License', icon: Key },
     { id: 'sync' as TabType, name: 'Cloud Sync', icon: Cloud },
-    { id: 'emergency' as TabType, name: 'Emergency', icon: AlertTriangle },
   ];
 
   if (!isAuthenticated) {
@@ -189,6 +206,7 @@ function App() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {activeTab === 'overview' && <DashboardOverview />}
         {activeTab === 'checkin' && (
           <GuestCheckin propertyId={PROPERTY_ID} onSuccess={handleCheckinSuccess} />
         )}
@@ -199,6 +217,10 @@ function App() {
             onAddUser={() => setActiveTab('checkin')} 
           />
         )}
+        {activeTab === 'hotels' && <HotelManagement />}
+        {activeTab === 'experiences' && <ExperienceManagement />}
+        {activeTab === 'services' && <ServiceManagement />}
+        {activeTab === 'feedback' && <FeedbackManagement />}
         {activeTab === 'housekeeping' && <Housekeeping propertyId={PROPERTY_ID} />}
         {activeTab === 'pricing' && <DynamicPricing propertyId={PROPERTY_ID} />}
         {activeTab === 'license' && <LicenseActivation propertyId={PROPERTY_ID} />}

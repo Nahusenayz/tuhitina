@@ -74,3 +74,38 @@ export interface EmergencyAlert {
   timestamp: string;
   acknowledged_at?: string;
 }
+
+export interface Hotel {
+  id: string;
+  name: string;
+  location: string;
+  price_per_night: number;
+  rating: number;
+  image_url: string;
+  description?: string;
+  amenities?: string[];
+  created_at: string;
+}
+
+export interface Experience {
+  id: string;
+  name: string;
+  location: string;
+  price: number;
+  rating: number;
+  image_url: string;
+  description?: string;
+  category: string;
+  created_at: string;
+}
+
+export interface HospitalityService {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  image_url?: string;
+  is_available: boolean;
+  created_at: string;
+}

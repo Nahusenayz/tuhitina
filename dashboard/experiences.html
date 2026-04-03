@@ -24,53 +24,8 @@
             <input type="text" placeholder="Search experiences..." style="border: none; outline: none; background: transparent; flex: 1; font-size: 14px;" data-i18n-placeholder="search_placeholder">
         </div>
 
-        <div class="card hotel-card">
-            <div class="hotel-img-container">
-                <img src="https://images.unsplash.com/photo-1545638870-42aa19ac5812?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Exp" class="hotel-img">
-                <div class="rating-badge">
-                    <i class="fas fa-star" style="color: #FFD700;"></i>
-                    <span>4.9</span>
-                </div>
-            </div>
-            <div class="hotel-content">
-                <h3 style="font-size: 1.1rem;">Traditional Coffee Ceremony</h3>
-                <p class="text-sm" style="color: var(--on-surface-variant); margin-top: 4px;">Authentic Ethiopian experience in Bole</p>
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 16px;">
-                    <div>
-                        <p class="text-xs uppercase font-bold" style="color: var(--outline);">LOCATION</p>
-                        <p class="text-sm">Addis Ababa</p>
-                    </div>
-                    <div class="price-tag">
-                        <span class="price-val">800 ETB</span>
-                        <span class="text-xs uppercase" style="color: var(--outline);">PER PERSON</span>
-                    </div>
-                </div>
-                <button class="btn btn-primary btn-block mt-2" data-i18n="book_now">Book Now</button>
-            </div>
-        </div>
-
-        <div class="card hotel-card">
-            <div class="hotel-img-container">
-                <img src="https://images.unsplash.com/photo-1627664819818-e147d6221422?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Exp" class="hotel-img">
-                <div class="rating-badge">
-                    <i class="fas fa-star" style="color: #FFD700;"></i>
-                    <span>5.0</span>
-                </div>
-            </div>
-            <div class="hotel-content">
-                <h3 style="font-size: 1.1rem;">Lalibela Church Tour</h3>
-                <p class="text-sm" style="color: var(--on-surface-variant); margin-top: 4px;">Guided historical tour of rock-hewn churches</p>
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 16px;">
-                    <div>
-                        <p class="text-xs uppercase font-bold" style="color: var(--outline);">LOCATION</p>
-                        <p class="text-sm">Lalibela</p>
-                    </div>
-                    <div class="price-tag">
-                        <span class="price-val">3,500 ETB</span>
-                    </div>
-                </div>
-                <button class="btn btn-primary btn-block mt-2" data-i18n="book_now">Book Now</button>
-            </div>
+        <div id="experiences-container">
+            <p class="text-center">Loading experiences...</p>
         </div>
     </main>
 
@@ -103,6 +58,50 @@
         import api from './js/api.js';
         import lang from './js/lang.js';
         import './js/app.js';
+
+        const container = document.getElementById('experiences-container');
+
+        async function loadExperiences() {
+            try {
+                const experiences = await api.getExperiences();
+                if (!experiences || experiences.length === 0) {
+                    container.innerHTML = '<p class="text-center">No experiences found.</p>';
+                    return;
+                }
+
+                container.innerHTML = experiences.map(exp => `
+                    <div class="card hotel-card">
+                        <div class="hotel-img-container">
+                            <img src="${exp.image_url}" alt="${exp.name}" class="hotel-img">
+                            <div class="rating-badge">
+                                <i class="fas fa-star" style="color: #FFD700;"></i>
+                                <span>${exp.rating || '5.0'}</span>
+                            </div>
+                        </div>
+                        <div class="hotel-content">
+                            <h3 style="font-size: 1.1rem;">${exp.name}</h3>
+                            <p class="text-sm" style="color: var(--on-surface-variant); margin-top: 4px;">${exp.description || ''}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 16px;">
+                                <div>
+                                    <p class="text-xs uppercase font-bold" style="color: var(--outline);">LOCATION</p>
+                                    <p class="text-sm">${exp.location}</p>
+                                </div>
+                                <div class="price-tag">
+                                    <span class="price-val">${new Intl.NumberFormat().format(exp.price)} ETB</span>
+                                    <span class="text-xs uppercase" style="color: var(--outline);">PER PERSON</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-block mt-2">Book Now</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading experiences:', error);
+                container.innerHTML = '<p class="text-center">Error loading experiences.</p>';
+            }
+        }
+
+        loadExperiences();
     </script>
 </body>
 </html>

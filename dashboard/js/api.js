@@ -187,6 +187,37 @@ const api = {
 
         if (error) return { success: false, error: error.message };
         return { success: true };
+    },
+
+    // Experiences
+    getExperiences: async () => {
+        console.log('API: Fetching experiences');
+        if (!supabase) return [];
+        const { data, error } = await supabase.from('experiences').select('*');
+        if (error) return [];
+        return data;
+    },
+
+    // Services
+    getServices: async () => {
+        console.log('API: Fetching services');
+        if (!supabase) return [];
+        const { data, error } = await supabase.from('services').select('*').eq('is_available', true);
+        if (error) return [];
+        return data;
+    },
+
+    // Feedback
+    submitFeedback: async (feedbackData) => {
+        console.log('API: Submitting feedback', feedbackData);
+        if (!supabase) return { success: false };
+        const { error } = await supabase.from('feedback').insert([{
+            guest_name: feedbackData.name,
+            rating: feedbackData.rating,
+            comment: feedbackData.comment,
+            status: 'pending'
+        }]);
+        return { success: !error };
     }
 };
 

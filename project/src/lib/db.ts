@@ -1,4 +1,16 @@
-import type { Guest, Preference, HousekeepingTask, PricingHistory, LicenseActivation, AuditLog, EmergencyAlert } from '../types';
+import { supabase } from './supabase';
+import type { 
+  Guest, 
+  Preference, 
+  HousekeepingTask, 
+  PricingHistory, 
+  LicenseActivation, 
+  AuditLog, 
+  EmergencyAlert,
+  Hotel,
+  Experience,
+  HospitalityService
+} from '../types';
 
 const isElectron = typeof window !== 'undefined' && window.electron;
 
@@ -221,5 +233,89 @@ export const emergencyDb = {
       'UPDATE emergency_alerts SET status = ?, acknowledged_at = ? WHERE id = ?',
       ['acknowledged', acknowledged_at, id]
     );
+  },
+};
+
+export const hotelDb = {
+  async getAll(): Promise<Hotel[]> {
+    const { data, error } = await supabase.from('hotels').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+  async create(hotel: Partial<Hotel>): Promise<Hotel> {
+    const { data, error } = await supabase.from('hotels').insert([hotel]).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id: string, updates: Partial<Hotel>): Promise<Hotel> {
+    const { data, error } = await supabase.from('hotels').update(updates).eq('id', id).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase.from('hotels').delete().eq('id', id);
+    if (error) throw error;
+  },
+};
+
+export const experienceDb = {
+  async getAll(): Promise<Experience[]> {
+    const { data, error } = await supabase.from('experiences').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+  async create(experience: Partial<Experience>): Promise<Experience> {
+    const { data, error } = await supabase.from('experiences').insert([experience]).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id: string, updates: Partial<Experience>): Promise<Experience> {
+    const { data, error } = await supabase.from('experiences').update(updates).eq('id', id).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase.from('experiences').delete().eq('id', id);
+    if (error) throw error;
+  },
+};
+
+export const serviceDb = {
+  async getAll(): Promise<HospitalityService[]> {
+    const { data, error } = await supabase.from('services').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+  async create(service: Partial<HospitalityService>): Promise<HospitalityService> {
+    const { data, error } = await supabase.from('services').insert([service]).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id: string, updates: Partial<HospitalityService>): Promise<HospitalityService> {
+    const { data, error } = await supabase.from('services').update(updates).eq('id', id).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase.from('services').delete().eq('id', id);
+    if (error) throw error;
+  },
+};
+
+export const dashboardDb = {
+  async getStats() {
+    const { count: guestCount } = await supabase.from('guests').select('*', { count: 'exact', head: true });
+    const { count: hotelCount } = await supabase.from('hotels').select('*', { count: 'exact', head: true });
+    const { count: experienceCount } = await supabase.from('experiences').select('*', { count: 'exact', head: true });
+    const { count: serviceCount } = await supabase.from('services').select('*', { count: 'exact', head: true });
+    const { count: alertCount } = await supabase.from('emergency_alerts').select('*', { count: 'exact', head: true }).eq('status', 'active');
+
+    return {
+      guests: guestCount || 0,
+      hotels: hotelCount || 0,
+      experiences: experienceCount || 0,
+      services: serviceCount || 0,
+      activeAlerts: alertCount || 0,
+    };
   },
 };
