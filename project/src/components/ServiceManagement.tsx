@@ -37,8 +37,9 @@ export default function ServiceManagement() {
       setIsAdding(false);
       setNewService({ name: '', description: '', price: 0, category: 'Amenity', is_available: true });
       fetchServices();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating service:', error);
+      alert(`Failed to create service: ${error.message || 'Unknown error'}`);
     }
   };
 

@@ -47,9 +47,9 @@ export default function ExperienceManagement() {
         description: '',
       });
       fetchExperiences();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating experience:', error);
-      alert('Failed to create experience');
+      alert(`Failed to create experience: ${error.message || 'Unknown error'}`);
     }
   };
 

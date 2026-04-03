@@ -45,9 +45,9 @@ export default function HotelManagement() {
         amenities: [],
       });
       fetchHotels();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating hotel:', error);
-      alert('Failed to create hotel');
+      alert(`Failed to create hotel: ${error.message || 'Unknown error'}`);
     }
   };
 

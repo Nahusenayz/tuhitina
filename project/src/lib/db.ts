@@ -244,7 +244,10 @@ export const hotelDb = {
   },
   async create(hotel: Partial<Hotel>): Promise<Hotel> {
     const { data, error } = await supabase.from('hotels').insert([hotel]).select().single();
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase error in hotelDb.create:', error);
+      throw error;
+    }
     return data;
   },
   async update(id: string, updates: Partial<Hotel>): Promise<Hotel> {
