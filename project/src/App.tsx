@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Hotel,
   UserPlus,
@@ -9,6 +9,8 @@ import {
   Cloud,
   Menu,
   X,
+  LogOut,
+  AlertTriangle,
 } from 'lucide-react';
 import GuestCheckin from './components/GuestCheckin';
 import GuestList from './components/GuestList';
@@ -16,15 +18,70 @@ import Housekeeping from './components/Housekeeping';
 import DynamicPricing from './components/DynamicPricing';
 import LicenseActivation from './components/LicenseActivation';
 import CloudSync from './components/CloudSync';
+import EmergencyAlerts from './components/EmergencyAlerts';
+import AdminLogin from './components/AdminLogin';
+import { supabase } from './lib/supabase';
+import { emergencyDb } from './lib/db';
 
 const PROPERTY_ID = import.meta.env.VITE_PROPERTY_ID || 'demo-property-001';
 
-type TabType = 'checkin' | 'guests' | 'housekeeping' | 'pricing' | 'license' | 'sync';
+type TabType = 'checkin' | 'guests' | 'housekeeping' | 'pricing' | 'license' | 'sync' | 'emergency';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('admin_auth') === 'true';
+  });
   const [activeTab, setActiveTab] = useState<TabType>('checkin');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    // Supabase Realtime Subscription for Guests
+    const guestsChannel = supabase
+      .channel('guests-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'guests' },
+        (payload) => {
+          console.log('Guest update:', payload);
+          setRefreshTrigger((prev) => prev + 1);
+        }
+      )
+      .subscribe();
+
+    // Supabase Realtime Subscription for Emergency Alerts
+    const alertsChannel = supabase
+      .channel('alerts-changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'emergency_alerts' },
+        async (payload) => {
+          console.log('New emergency alert:', payload);
+          // Save to local DB first
+          try {
+            await emergencyDb.create(payload.new as any);
+          } catch (err) {
+            console.error('Error saving alert to local DB:', err);
+          }
+          setRefreshTrigger((prev) => prev + 1);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(guestsChannel);
+      supabase.removeChannel(alertsChannel);
+    };
+  }, []);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+    localStorage.setItem('admin_auth', 'true');
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('admin_auth');
+  };
 
   const handleCheckinSuccess = () => {
     setRefreshTrigger((prev) => prev + 1);
@@ -38,7 +95,12 @@ function App() {
     { id: 'pricing' as TabType, name: 'Pricing', icon: DollarSign },
     { id: 'license' as TabType, name: 'License', icon: Key },
     { id: 'sync' as TabType, name: 'Cloud Sync', icon: Cloud },
+    { id: 'emergency' as TabType, name: 'Emergency', icon: AlertTriangle },
   ];
+
+  if (!isAuthenticated) {
+    return <AdminLogin onLogin={handleLogin} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -53,12 +115,23 @@ function App() {
               </div>
             </div>
 
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden p-2 rounded-md hover:bg-gray-100"
-            >
-              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleLogout}
+                className="hidden md:flex items-center gap-2 text-gray-600 hover:text-red-600 transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-5 h-5" />
+                <span className="text-sm font-medium">Logout</span>
+              </button>
+
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="md:hidden p-2 rounded-md hover:bg-gray-100"
+              >
+                {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
 
             <nav className="hidden md:flex gap-2">
               {tabs.map((tab) => {
@@ -103,6 +176,13 @@ function App() {
                   </button>
                 );
               })}
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-2 px-4 py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm font-medium">Logout Admin</span>
+              </button>
             </nav>
           )}
         </div>
@@ -113,12 +193,17 @@ function App() {
           <GuestCheckin propertyId={PROPERTY_ID} onSuccess={handleCheckinSuccess} />
         )}
         {activeTab === 'guests' && (
-          <GuestList propertyId={PROPERTY_ID} refreshTrigger={refreshTrigger} />
+          <GuestList 
+            propertyId={PROPERTY_ID} 
+            refreshTrigger={refreshTrigger} 
+            onAddUser={() => setActiveTab('checkin')} 
+          />
         )}
         {activeTab === 'housekeeping' && <Housekeeping propertyId={PROPERTY_ID} />}
         {activeTab === 'pricing' && <DynamicPricing propertyId={PROPERTY_ID} />}
         {activeTab === 'license' && <LicenseActivation propertyId={PROPERTY_ID} />}
         {activeTab === 'sync' && <CloudSync propertyId={PROPERTY_ID} />}
+        {activeTab === 'emergency' && <EmergencyAlerts key={refreshTrigger} />}
       </main>
 
       <footer className="bg-white border-t border-gray-200 mt-12">

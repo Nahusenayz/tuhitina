@@ -1,4 +1,4 @@
-import type { Guest, Preference, HousekeepingTask, PricingHistory, LicenseActivation, AuditLog } from '../types';
+import type { Guest, Preference, HousekeepingTask, PricingHistory, LicenseActivation, AuditLog, EmergencyAlert } from '../types';
 
 const isElectron = typeof window !== 'undefined' && window.electron;
 
@@ -70,6 +70,11 @@ export const guestDb = {
   async markSynced(id: string): Promise<void> {
     const synced_at = new Date().toISOString();
     await execute('UPDATE guests SET synced_at = ? WHERE id = ?', [synced_at, id]);
+  },
+
+  async delete(id: string): Promise<void> {
+    await execute('DELETE FROM guests WHERE id = ?', [id]);
+    await execute('DELETE FROM preferences WHERE guest_id = ?', [id]);
   },
 };
 
@@ -191,5 +196,30 @@ export const auditDb = {
     );
 
     return { ...log, id, created_at };
+  },
+};
+
+export const emergencyDb = {
+  async create(alert: Omit<EmergencyAlert, 'id'>): Promise<EmergencyAlert> {
+    const id = generateId();
+    await execute(
+      `INSERT INTO emergency_alerts (id, guest_id, type, location, status, timestamp)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [id, alert.guest_id, alert.type, alert.location, alert.status, alert.timestamp]
+    );
+    return { ...alert, id };
+  },
+
+  async getAll(): Promise<EmergencyAlert[]> {
+    const result = await execute('SELECT * FROM emergency_alerts ORDER BY timestamp DESC');
+    return (result as EmergencyAlert[]) || [];
+  },
+
+  async acknowledge(id: string): Promise<void> {
+    const acknowledged_at = new Date().toISOString();
+    await execute(
+      'UPDATE emergency_alerts SET status = ?, acknowledged_at = ? WHERE id = ?',
+      ['acknowledged', acknowledged_at, id]
+    );
   },
 };

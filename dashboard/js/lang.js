@@ -40,7 +40,11 @@ const translations = {
         'loyalty': 'Loyalty',
         'saved': 'Saved',
         'itinerary': 'Itinerary',
-        'payments': 'Payments'
+        'payments': 'Payments',
+        'share': 'Share',
+        'current_location': 'Current Location',
+        'send_emergency_alert': 'Send Emergency Alert to Hotel Admin',
+        'emergency_system': 'Emergency System'
     },
     'am': {
         'home': 'መነሻ',
@@ -81,7 +85,11 @@ const translations = {
         'loyalty': 'ታማኝነት',
         'saved': 'የተቀመጡ',
         'itinerary': 'የጉዞ እቅድ',
-        'payments': 'ክፍያዎች'
+        'payments': 'ክፍያዎች',
+        'share': 'አጋራ',
+        'current_location': 'የአሁኑ መገኛ',
+        'send_emergency_alert': 'ለሆቴል አስተዳዳሪ የአደጋ ጊዜ ማስጠንቀቂያ ይላኩ',
+        'emergency_system': 'የአደጋ ጊዜ ሥርዓት'
     }
 };
 

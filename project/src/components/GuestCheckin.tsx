@@ -59,6 +59,22 @@ export default function GuestCheckin({ propertyId, onSuccess }: GuestCheckinProp
       };
 
       const createdGuest = await guestDb.create(guest);
+      
+      // Sync to cloud immediately
+      try {
+        const { data: cloudGuest, error: cloudError } = await supabase
+          .from('guests')
+          .insert([{ ...guest, id: createdGuest.id }])
+          .select()
+          .single();
+          
+        if (!cloudError && cloudGuest) {
+          await guestDb.markSynced(createdGuest.id);
+        }
+      } catch (cloudErr) {
+        console.warn('Initial cloud sync failed, will retry in background:', cloudErr);
+      }
+
       setCurrentGuestId(createdGuest.id);
       setShowPreferenceForm(true);
     } catch (error) {

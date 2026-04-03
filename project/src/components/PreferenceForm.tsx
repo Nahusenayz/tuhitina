@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Heart } from 'lucide-react';
 import { preferenceDb } from '../lib/db';
+import { supabase } from '../lib/supabase';
 import type { Preference } from '../types';
 
 interface PreferenceFormProps {
@@ -22,12 +23,23 @@ export default function PreferenceForm({ guestId, existingPreference, onSuccess 
     setLoading(true);
 
     try {
-      await preferenceDb.create({
+      const prefData = {
         guest_id: guestId,
         pillow_type: formData.pillow_type as 'soft' | 'firm' | undefined,
         dietary_restrictions: formData.dietary_restrictions,
         spa_preference: formData.spa_preference,
-      });
+      };
+
+      await preferenceDb.create(prefData);
+
+      // Sync to cloud immediately
+      try {
+        await supabase
+          .from('preferences')
+          .upsert([{ ...prefData }], { onConflict: 'guest_id' });
+      } catch (cloudErr) {
+        console.warn('Preference cloud sync failed:', cloudErr);
+      }
 
       onSuccess();
     } catch (error) {

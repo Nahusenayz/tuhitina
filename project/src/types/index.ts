@@ -64,3 +64,13 @@ export interface AuditLog {
 export interface GuestWithPreferences extends Guest {
   preferences?: Preference;
 }
+
+export interface EmergencyAlert {
+  id: string;
+  guest_id?: string;
+  type: string;
+  location: string;
+  status: 'active' | 'acknowledged';
+  timestamp: string;
+  acknowledged_at?: string;
+}
