@@ -120,7 +120,7 @@
                                 </div>
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
                                     <span class="text-xs" style="color: var(--on-surface-variant); font-weight: 500;">(Verified Stay)</span>
-                                    <button class="btn btn-primary" style="padding: 12px 32px;" onclick="window.location.href='hotel-details.html?id=${hotel.id}'">Book Now</button>
+                                    <button class="btn btn-primary" style="padding: 12px 32px;" onclick="window.location.href='${hotel.id == 2 ? '../hinjun/kuriftu.html' : 'hotel-details.html?id=' + hotel.id}'">Book Now</button>
                                 </div>
                             </div>
                         </div>

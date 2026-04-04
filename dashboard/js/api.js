@@ -219,6 +219,70 @@ const api = {
             status: 'pending'
         }]);
         return { success: !error };
+    },
+
+    // --- SUPER ADMIN METHODS ---
+    adminGetAllHotels: async () => {
+        console.log('API: [Admin] Fetching all hotels');
+        if (!supabase) return [];
+        const { data, error } = await supabase.from('hotels').select('*').order('created_at', { ascending: false });
+        if (error) {
+            console.error('Error fetching admin hotels:', error);
+            return [];
+        }
+        return data;
+    },
+
+    adminAddHotel: async (hotelData) => {
+        console.log('API: [Admin] Adding new hotel', hotelData);
+        if (!supabase) return { success: false, error: 'Supabase not initialized' };
+        const { data, error } = await supabase.from('hotels').insert([{
+            name: hotelData.name,
+            location: hotelData.location,
+            price_per_night: hotelData.price,
+            rating: hotelData.rating || 4.5,
+            image_url: hotelData.image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+            status: 'approved'
+        }]).select();
+        if (error) return { success: false, error: error.message };
+        return { success: true, hotel: data[0] };
+    },
+
+    adminDeleteHotel: async (id) => {
+        console.log('API: [Admin] Deleting hotel', id);
+        if (!supabase) return { success: false, error: 'Supabase not initialized' };
+        const { error } = await supabase.from('hotels').delete().eq('id', id);
+        if (error) return { success: false, error: error.message };
+        return { success: true };
+    },
+
+    adminGetAllUsers: async () => {
+        console.log('API: [Admin] Fetching all users');
+        if (!supabase) return [];
+        const { data, error } = await supabase.from('guests').select('*').order('created_at', { ascending: false });
+        if (error) {
+            console.error('Error fetching admin users:', error);
+            return [];
+        }
+        return data;
+    },
+
+    adminGetStats: async () => {
+        console.log('API: [Admin] Calculating stats');
+        if (!supabase) return { hotels: 0, users: 0, bookings: 0 };
+        
+        const [hotels, users, bookings] = await Promise.all([
+            supabase.from('hotels').select('id', { count: 'exact', head: true }),
+            supabase.from('guests').select('id', { count: 'exact', head: true }),
+            supabase.from('bookings').select('id', { count: 'exact', head: true })
+        ]);
+
+        return {
+            hotels: hotels.count || 0,
+            users: users.count || 0,
+            bookings: bookings.count || 0,
+            revenue: 245000 // Placeholder for now
+        };
     }
 };
 
